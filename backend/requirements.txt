@@ -3,3 +3,4 @@ uvicorn[standard]
 pydantic-settings
 passlib[bcrypt]
 python-jose[cryptography]
+python-multipart
