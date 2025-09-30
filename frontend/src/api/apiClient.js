@@ -1,16 +1,18 @@
 import axios from 'axios';
 
-// Lee la URL base desde las variables de entorno de Vite
-// El prefijo VITE_ es obligatorio para que Vercel/Vite la exponga al frontend.
+// 1. Lee la URL base desde las variables de entorno de Vite.
 const baseURL = import.meta.env.VITE_API_BASE_URL;
 
-// Si la variable no está definida, lanza un error claro para saber qué pasa.
+// 2. DIAGNÓSTICO: Esto nos mostrará en la consola del navegador qué URL está usando.
+console.log("VITE_API_BASE_URL is:", baseURL);
+
+// 3. Si la variable no está definida, lanza un error claro.
 if (!baseURL) {
-  console.error("ERROR: La variable de entorno VITE_API_BASE_URL no está configurada.");
+  console.error("CRITICAL ERROR: La variable de entorno VITE_API_BASE_URL no está configurada en el entorno de Vercel.");
 }
 
 const apiClient = axios.create({
-  baseURL: baseURL, // Usa la URL de Render en producción
+  baseURL: baseURL,
 });
 
 apiClient.interceptors.request.use(
