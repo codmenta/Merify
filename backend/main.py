@@ -5,13 +5,16 @@ from core.config import settings
 
 app = FastAPI(title=settings.PROJECT_NAME)
 
+# Dividimos el string por comas para crear la lista
+origins = [origin.strip() for origin in settings.ALLOWED_ORIGINS_STR.split(',')]
+
 app.add_middleware(
-    CORSMiddleware,
-    allow_origins=settings.ALLOWED_ORIGINS,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+     CORSMiddleware,
+     allow_origins=origins,
+     allow_credentials=True,
+     allow_methods=["*"],
+     allow_headers=["*"],
+ )
 
 app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
 app.include_router(products.router, prefix="/api", tags=["Products"])
