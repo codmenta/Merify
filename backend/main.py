@@ -1,8 +1,12 @@
-# backend/main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.routes import auth, products, users, orders
 from core.config import settings
+import logging
+
+# Configurar logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI(title=settings.PROJECT_NAME)
 
@@ -12,6 +16,10 @@ origins = [origin.strip() for origin in settings.ALLOWED_ORIGINS_STR.split(',') 
 # Si no hay orígenes configurados, usar valores por defecto (solo desarrollo)
 if not origins:
     origins = ["http://localhost:3000", "http://localhost:5173"]
+
+# LOG IMPORTANTE: Ver qué orígenes se están permitiendo
+logger.info(f"🔥 CORS Origins configurados: {origins}")
+logger.info(f"🔥 ALLOWED_ORIGINS_STR: {settings.ALLOWED_ORIGINS_STR}")
 
 app.add_middleware(
     CORSMiddleware,
@@ -32,3 +40,12 @@ app.include_router(orders.router, prefix="/api", tags=["Orders"])
 def health_check():
     """Endpoint de verificación para saber si la API está funcionando."""
     return {"status": "ok"}
+
+@app.get("/api/debug/cors")
+def debug_cors():
+    """Endpoint para verificar la configuración de CORS"""
+    return {
+        "allowed_origins": origins,
+        "origins_str": settings.ALLOWED_ORIGINS_STR,
+        "origins_count": len(origins)
+    }
