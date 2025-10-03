@@ -1,52 +1,108 @@
-import React, { useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react'; // 1. IMPORTAMOS useState y useEffect
 import { useNavigate } from 'react-router-dom';
+import { loadStripe } from '@stripe/stripe-js';
 import { CartContext } from '../../context/CartContext';
 import { AuthContext } from '../../context/AuthContext';
 import apiClient from '../../api/apiClient';
 import styles from './CartPage.module.css';
+
+// 2. HEMOS QUITADO la carga estática de Stripe de aquí.
+// Ahora se cargará dinámicamente.
 
 const CartPage = () => {
   const { cart, removeFromCart, updateQuantity, clearCart, loading } = useContext(CartContext);
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // ✅ CAMBIO: Usar "precio" en lugar de "precio_final"
+  // 3. NUEVO ESTADO: Guardará la instancia de Stripe una vez que tengamos la clave.
+  const [stripePromise, setStripePromise] = useState(null);
+
+  // 4. NUEVO EFECTO: Se ejecuta una sola vez cuando el componente se monta.
+  // Su trabajo es pedirle la clave publicable a nuestro backend.
+   useEffect(() => {
+    apiClient.get('/payments/config')
+      .then(response => {
+        // --- LÍNEA DE DEPURACIÓN CRUCIAL ---
+        // Vamos a imprimir la respuesta completa para ver qué estamos recibiendo
+        console.log("Respuesta completa del backend (/payments/config):", response.data);
+
+        const { publishableKey } = response.data;
+        
+        // Vamos a imprimir la clave específica que extraemos
+        console.log("Clave extraída para usar en Stripe:", publishableKey);
+        
+        if (publishableKey) {
+          setStripePromise(loadStripe(publishableKey));
+        } else {
+          console.error("Clave publicable no encontrada en la respuesta del backend.");
+        }
+      })
+      .catch(error => {
+        console.error("Error al obtener la configuración de pago del backend:", error);
+      });
+  }, []);
+
+
   const total = cart.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
 
   const handleCheckout = async () => {
+    // Verificación de seguridad: El usuario debe estar logueado.
     if (!user) {
-      alert("Debes iniciar sesión para realizar un pedido.");
+      alert("Debes iniciar sesión para proceder al pago.");
       navigate('/login');
       return;
     }
-    
-    const orderData = {
-      items: cart.map(item => ({
-        id: item.producto_id,
-        nombre: item.nombre,
-        cantidad: item.cantidad,
-        precio_final: item.precio
-      })),
-      total: total
-    };
+
+    // Verificación de seguridad: No hacer nada si Stripe no está listo.
+    if (!stripePromise) {
+      alert("La pasarela de pago no está lista. Por favor, espera un momento.");
+      return;
+    }
+
+    const stripe = await stripePromise;
+
+    const line_items = cart.map(item => ({
+      price_data: {
+        currency: 'cop',
+        product_data: {
+          name: item.nombre,
+        },
+        unit_amount: Math.round(item.precio * 100), // Usamos Math.round por seguridad
+      },
+      quantity: item.cantidad,
+    }));
 
     try {
-      await apiClient.post('/orders', orderData);
-      alert('¡Pedido realizado con éxito!');
-      clearCart();
-      navigate('/');
+      // Llama a tu backend para crear la sesión de pago
+      const response = await apiClient.post('/payments/create-checkout-session', {
+        line_items: line_items,
+        customer_email: user.email,
+      });
+
+      const { sessionId } = response.data;
+
+      // Redirige al usuario a la página de pago de Stripe
+      const { error } = await stripe.redirectToCheckout({
+        sessionId: sessionId,
+      });
+
+      if (error) {
+        alert(error.message);
+      }
     } catch (error) {
-      console.error("Error al crear el pedido:", error);
-      alert('Hubo un error al procesar tu pedido. Inténtalo de nuevo.');
+      const errorMessage = error.response?.data?.detail || "Hubo un error al preparar tu pago.";
+      alert(errorMessage);
     }
   };
 
-  const formatCurrency = (value) => 
-    new Intl.NumberFormat('es-CO', { 
-        style: 'currency', 
-        currency: 'COP',
-        maximumFractionDigits: 0
+  const formatCurrency = (value) =>
+    new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      maximumFractionDigits: 0
     }).format(value);
+
+  // --- El resto del JSX y la lógica de renderizado permanece igual ---
 
   if (!user) {
     return (
@@ -67,7 +123,7 @@ const CartPage = () => {
       </div>
     );
   }
-
+  
   if (cart.length === 0) {
     return (
       <div className={styles.emptyCart}>
@@ -78,7 +134,7 @@ const CartPage = () => {
       </div>
     );
   }
-
+  
   return (
     <div className={styles.cartPage}>
       <div className={styles.cartContainer}>
@@ -87,42 +143,18 @@ const CartPage = () => {
         <div className={styles.cartItems}>
           {cart.map(item => (
             <div key={item.id} className={styles.cartItem}>
-              <div className={styles.itemImage}>
-                <div className={styles.itemPlaceholder}>💻</div>
-              </div>
-              
+              <div className={styles.itemImage}><div className={styles.itemPlaceholder}>💻</div></div>
               <div className={styles.itemDetails}>
                 <h3 className={styles.itemName}>{item.nombre}</h3>
                 <p className={styles.itemPrice}>{formatCurrency(item.precio)}</p>
               </div>
-              
               <div className={styles.itemQuantity}>
-                <button 
-                  className={styles.quantityBtn}
-                  onClick={() => updateQuantity(item.id, item.cantidad - 1)}
-                >
-                  -
-                </button>
+                <button className={styles.quantityBtn} onClick={() => updateQuantity(item.id, item.cantidad - 1)}>-</button>
                 <span className={styles.quantityValue}>{item.cantidad}</span>
-                <button 
-                  className={styles.quantityBtn}
-                  onClick={() => updateQuantity(item.id, item.cantidad + 1)}
-                >
-                  +
-                </button>
+                <button className={styles.quantityBtn} onClick={() => updateQuantity(item.id, item.cantidad + 1)}>+</button>
               </div>
-              
-              <div className={styles.itemSubtotal}>
-                {formatCurrency(item.precio * item.cantidad)}
-              </div>
-              
-              <button 
-                className={styles.deleteBtn}
-                onClick={() => removeFromCart(item.id)}
-                title="Eliminar producto"
-              >
-                🗑️
-              </button>
+              <div className={styles.itemSubtotal}>{formatCurrency(item.precio * item.cantidad)}</div>
+              <button className={styles.deleteBtn} onClick={() => removeFromCart(item.id)} title="Eliminar producto">🗑️</button>
             </div>
           ))}
         </div>
@@ -134,23 +166,29 @@ const CartPage = () => {
           </div>
           <div className={styles.summaryRow}>
             <span className={styles.summaryLabel}>Envío:</span>
-            <span className={styles.summaryValue}>Gratis</span>
+            <span className={styles.summaryValue}>Por Calcular</span>
           </div>
-          <div className={styles.summaryRowTotal}>
-            <span className={styles.summaryLabel}>Total:</span>
-            <span className={styles.summaryValue}>{formatCurrency(total)}</span>
+          <div className={styles.summaryRow}>
+            <span className={styles.summaryLabel} style={{fontWeight: 'bold'}}>Total:</span>
+            <span className={styles.summaryValue} style={{fontWeight: 'bold'}}>{formatCurrency(total)}</span>
           </div>
+          
+          <button 
+            className={styles.checkoutBtn} 
+            onClick={handleCheckout}
+            // 5. El botón se deshabilita mientras Stripe se carga
+            disabled={!stripePromise || loading} 
+          >
+            {stripePromise ? 'Pagar con Tarjeta' : 'Cargando...'}
+          </button>
+          
+          <button className={styles.clearBtn} onClick={clearCart}>
+            Vaciar Carrito
+          </button>
         </div>
-      </div>  
-      <div className={styles.checkoutContainer}>
-        <button className={styles.checkoutButton} onClick={handleCheckout}>
-          Realizar Pedido
-        </button>
       </div>
     </div>
   );
 };
 
 export default CartPage;
-
-//

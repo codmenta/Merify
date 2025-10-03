@@ -28,27 +28,34 @@ def register_user(form_data: UserCreate):
             detail="El email ya está registrado.",
         )
 
-    hashed_password = get_password_hash(form_data.password)
-    new_user = User(
-        nombre=form_data.nombre,
-        email=email,
-        tipo=form_data.tipo
-    ).dict()
-    new_user["hashed_password"] = hashed_password
+    # Preparamos los datos del nuevo usuario para la base de datos
+    user_to_save = {
+        "nombre": form_data.nombre,
+        "email": email,
+        "tipo": form_data.tipo,
+        "hashed_password": get_password_hash(form_data.password)
+    }
 
-    users[email] = new_user
+    # Guardamos en el archivo JSON
+    users[email] = user_to_save
     save_users(users)
 
     # Crear token de acceso
     access_token = create_access_token(data={"sub": email})
     
-    # Devolver token + datos del usuario (sin la contraseña)
-    user_response = User(**new_user)
+    # Preparamos los datos del usuario para la respuesta (SIN la contraseña)
+    # Reutilizamos el modelo `User` que no tiene el campo de la contraseña.
+    user_for_response = User(
+        nombre=form_data.nombre,
+        email=email,
+        tipo=form_data.tipo
+    )
     
+    # Devolvemos la respuesta correcta
     return TokenWithUser(
         access_token=access_token,
         token_type="bearer",
-        user=user_response
+        user=user_for_response
     )
 
 

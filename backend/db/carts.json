@@ -1,1 +1,12 @@
-{}
+{
+  "ncmunozg@unimayor.edu.co": [
+    {
+      "id": 1,
+      "producto_id": 2,
+      "nombre": "Tarjeta Gráfica NVIDIA RTX 4080",
+      "precio": 4670000,
+      "cantidad": 1,
+      "imagen": ""
+    }
+  ]
+}

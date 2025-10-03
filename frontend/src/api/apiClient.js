@@ -1,22 +1,35 @@
 import axios from 'axios';
 
-// 1. Lee la URL base desde las variables de entorno de Vite.
-// El prefijo VITE_ es obligatorio para que Vercel/Vite la exponga al frontend.
+// Esto está perfecto, no hay que cambiarlo
 const baseURL = import.meta.env.VITE_API_BASE_URL || '/api';
-
-// 2. DIAGNÓSTICO: Esto nos mostrará en la consola del navegador qué URL está usando.
-// Esto es CLAVE para depurar.
 console.log(`[API Client] La URL base de la API es: ${baseURL}`);
 
 const apiClient = axios.create({
   baseURL: baseURL,
 });
 
+// Interceptor con la corrección
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    // Obtenemos el token de localStorage (que está "envuelto" en comillas)
+    const token = localStorage.getItem('token'); 
+    
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      // --- CAMBIO CLAVE AQUÍ ---
+      // Usamos JSON.parse() para quitar las comillas extra del string
+      // antes de inyectarlo en la cabecera.
+      // Si el token es null o inválido, JSON.parse dará error, así que
+      // lo manejamos dentro de un bloque try...catch por seguridad.
+      try {
+        const parsedToken = JSON.parse(token);
+        if (parsedToken) {
+          config.headers.Authorization = `Bearer ${parsedToken}`;
+        }
+      } catch (e) {
+        console.error("No se pudo parsear el token desde localStorage", e);
+        // Opcional: limpiar token corrupto
+        // localStorage.removeItem('token');
+      }
     }
     return config;
   },

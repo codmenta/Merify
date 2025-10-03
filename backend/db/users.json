@@ -1,1 +1,8 @@
-[]
+{
+  "ncmunozg@unimayor.edu.co": {
+    "nombre": "Camilo Muñoz",
+    "email": "ncmunozg@unimayor.edu.co",
+    "tipo": "cliente",
+    "hashed_password": "$5$rounds=535000$KAQNX7ghDV/WFftK$nrIVrLvHTB/VL4GTjpA.nE8XhMcs4c04DC8osJzYcoC"
+  }
+}

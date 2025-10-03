@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api.routes import auth, products, users, orders, cart  # AGREGAR cart
+from api.routes import auth, products, users, orders, cart, payments    # Asegúrate de importar el router de pagos 
 from core.config import settings
 import logging
 
@@ -18,8 +18,8 @@ if not origins:
     origins = ["http://localhost:3000", "http://localhost:5173"]
 
 # LOG IMPORTANTE: Ver qué orígenes se están permitiendo
-logger.info(f"🔥 CORS Origins configurados: {origins}")
-logger.info(f"🔥 ALLOWED_ORIGINS_STR: {settings.ALLOWED_ORIGINS_STR}")
+logger.info(f"CORS Origins configurados: {origins}")
+logger.info(f"ALLOWED_ORIGINS_STR: {settings.ALLOWED_ORIGINS_STR}")
 
 app.add_middleware(
     CORSMiddleware,
@@ -36,7 +36,12 @@ app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
 app.include_router(products.router, prefix="/api", tags=["Products"])
 app.include_router(users.router, prefix="/api/users", tags=["Users"])
 app.include_router(orders.router, prefix="/api", tags=["Orders"])
-app.include_router(cart.router, prefix="/api", tags=["Cart"])  # NUEVO: Router del carrito
+app.include_router(cart.router, prefix="/api", tags=["Cart"])
+app.include_router(
+    payments.router, 
+    prefix="/api/payments", # <-- PREFIJO CORREGIDO
+    tags=["Payments"]
+)
 
 @app.get("/api/health")
 def health_check():
