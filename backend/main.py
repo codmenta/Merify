@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api.routes import auth, products, users, orders
+from api.routes import auth, products, users, orders, cart  # AGREGAR cart
 from core.config import settings
 import logging
 
@@ -31,10 +31,12 @@ app.add_middleware(
     max_age=3600,
 )
 
+# Incluir routers
 app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
 app.include_router(products.router, prefix="/api", tags=["Products"])
 app.include_router(users.router, prefix="/api/users", tags=["Users"])
 app.include_router(orders.router, prefix="/api", tags=["Orders"])
+app.include_router(cart.router, prefix="/api", tags=["Cart"])  # NUEVO: Router del carrito
 
 @app.get("/api/health")
 def health_check():

@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
-import '../assets/Form.css';
+import { AuthContext } from '../../context/AuthContext';  // ✅ Ruta correcta
+import '../../assets/Form.css';  // ✅ Ruta correcta
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');

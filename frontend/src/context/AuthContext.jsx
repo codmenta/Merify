@@ -11,6 +11,7 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  // Función para obtener el usuario actual desde el backend
   const fetchUser = useCallback(async () => {
     if (token) {
       try {
@@ -18,34 +19,44 @@ export const AuthProvider = ({ children }) => {
         setUser(response.data);
       } catch (err) {
         console.error("Failed to fetch user:", err);
-        logout(); // Token is invalid, log out
+        // Token inválido, limpiar storage sin causar loop infinito
+        setUser(null);
+        setToken(null);
       }
     }
-  }, [token, setUser]);
+  }, [token, setUser, setToken]);
 
+  // Cargar usuario al montar el componente si hay token
   useEffect(() => {
-    fetchUser();
-  }, [fetchUser]);
+    if (token && !user) {
+      fetchUser();
+    }
+  }, [token, user, fetchUser]);
 
+  // Función de login
   const login = async (email, password) => {
     try {
+      // Preparar datos en formato form-urlencoded (OAuth2)
       const formData = new URLSearchParams();
       formData.append('username', email);
       formData.append('password', password);
 
+      // Llamar al endpoint de login
       const response = await apiClient.post('/auth/login', formData, {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       });
 
-      const { access_token } = response.data;
-      setToken(access_token);
+      // Extraer token y usuario de la respuesta
+      const { access_token, user: userData } = response.data;
       
-      const userResponse = await apiClient.get('/users/me', {
-        headers: { Authorization: `Bearer ${access_token}` },
-      });
-      setUser(userResponse.data);
+      // Guardar en localStorage
+      setToken(access_token);
+      setUser(userData);
 
+      // Limpiar errores
       setError(null);
+      
+      // Redirigir al home
       navigate('/');
     } catch (err) {
       setError("Email o contraseña incorrectos.");
@@ -53,21 +64,44 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Función de registro
   const register = async (nombre, email, password) => {
-     try {
-        const userData = { nombre, email, password, tipo: "cliente" };
-        await apiClient.post(`/auth/register?password=${encodeURIComponent(password)}`, userData);
-        setError(null);
-        navigate('/login');
+    try {
+      // Preparar datos del usuario
+      const userData = { 
+        nombre, 
+        email, 
+        password, 
+        tipo: "cliente" 
+      };
+      
+      // Llamar al endpoint de registro
+      const response = await apiClient.post('/auth/register', userData);
+      
+      // Extraer token y usuario de la respuesta
+      const { access_token, user: userDataResponse } = response.data;
+      
+      // Guardar en localStorage
+      setToken(access_token);
+      setUser(userDataResponse);
+      
+      // Limpiar errores
+      setError(null);
+      
+      // Redirigir al home
+      navigate('/');
     } catch (err) {
-        setError("El email ya está registrado o hubo un error.");
-        console.error("Registration failed:", err);
+      const errorMessage = err.response?.data?.detail || "El email ya está registrado o hubo un error.";
+      setError(errorMessage);
+      console.error("Registration failed:", err);
     }
   };
   
+  // Función de logout
   const logout = () => {
     setUser(null);
     setToken(null);
+    setError(null);
     navigate('/login');
   };
 

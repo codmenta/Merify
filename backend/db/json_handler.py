@@ -7,6 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent
 PRODUCTS_FILE = BASE_DIR / "productos.json"
 USERS_FILE = BASE_DIR / "users.json"
 ORDERS_FILE = BASE_DIR / "orders.json"
+CART_FILE = BASE_DIR / "carts.json"  # NUEVO: Archivo para carritos
 
 def _load_data(file_path: Path, default: Any) -> Any:
     if not file_path.exists():
@@ -36,3 +37,32 @@ def load_orders() -> List[Dict[str, Any]]:
 
 def save_orders(orders: List[Dict[str, Any]]):
     _save_data(ORDERS_FILE, orders)
+
+# ========== FUNCIONES DE CARRITO (NUEVAS) ==========
+def load_carts() -> Dict[str, List[Dict[str, Any]]]:
+    """
+    Carga los carritos de todos los usuarios.
+    Estructura: { "email_usuario": [ {item1}, {item2}, ... ], ... }
+    """
+    return _load_data(CART_FILE, {})
+
+def save_carts(carts: Dict[str, List[Dict[str, Any]]]):
+    """Guarda todos los carritos."""
+    _save_data(CART_FILE, carts)
+
+def get_user_cart(email: str) -> List[Dict[str, Any]]:
+    """Obtiene el carrito de un usuario específico."""
+    carts = load_carts()
+    return carts.get(email, [])
+
+def save_user_cart(email: str, cart_items: List[Dict[str, Any]]):
+    """Guarda el carrito de un usuario específico."""
+    carts = load_carts()
+    carts[email] = cart_items
+    save_carts(carts)
+
+def clear_user_cart(email: str):
+    """Vacía el carrito de un usuario."""
+    carts = load_carts()
+    carts[email] = []
+    save_carts(carts)

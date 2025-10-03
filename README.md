@@ -27,3 +27,23 @@ cp .env.example .env  # En Windows, usa 'copy'
 
 # 6. Inicia el servidor del backend
 uvicorn main:app --reload --port 8000
+
+### 2. Frontend (React)
+
+Abre una **nueva terminal** para ejecutar el frontend.
+
+```bash
+# 1. Navega a la carpeta del frontend
+cd frontend
+
+# 2. Instala las dependencias
+npm install
+
+# 3. Crea el archivo .env a partir del ejemplo
+# (Crea un archivo llamado .env en la carpeta 'frontend')
+# Y añade la siguiente línea para que se conecte con tu backend:
+# VITE_API_BASE_URL=http://localhost:8000/api
+
+# 4. Inicia el servidor de desarrollo de React
+npm run dev
+```
