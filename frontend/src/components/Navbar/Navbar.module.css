@@ -1,0 +1,380 @@
+/* Navbar Styles */
+.navbar {
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 4rem;
+  gap: 2rem;
+}
+
+/* Logo y navegación izquierda */
+.left {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #000;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.logo:hover {
+  opacity: 0.7;
+}
+
+.linksDesktop {
+  display: none;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .linksDesktop {
+    display: flex;
+  }
+}
+
+.dropdown {
+  background: transparent;
+  border: none;
+  color: #495057;
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  cursor: pointer;
+  padding: 0.5rem 0;
+  position: relative;
+  transition: color 0.2s;
+}
+
+.dropdown:hover {
+  color: #007bff;
+}
+
+.dropdown::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #007bff;
+  transition: width 0.3s ease;
+}
+
+.dropdown:hover::after {
+  width: 100%;
+}
+
+.dropdownIcon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.link {
+  color: #495057;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 0;
+  position: relative;
+  transition: color 0.2s;
+}
+
+.link:hover {
+  color: #007bff;
+}
+
+.link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #007bff;
+  transition: width 0.3s ease;
+}
+
+.link:hover::after,
+.link.active::after {
+  width: 100%;
+}
+
+/* Búsqueda */
+.searchDesktop {
+  flex: 1;
+  max-width: 600px;
+  position: relative;
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .searchDesktop {
+    display: flex;
+  }
+}
+
+.searchIcon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #6c757d;
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 3rem;
+  border: 1px solid #dee2e6;
+  border-radius: 50px;
+  font-size: 1rem;
+  outline: none;
+  background: #f8f9fa;
+  transition: all 0.2s;
+}
+
+.searchInput:focus {
+  border-color: #007bff;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+/* Búsqueda móvil */
+.searchMobile {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border-top: 1px solid #e9ecef;
+  position: relative;
+  animation: slideDown 0.3s ease;
+}
+
+/* Acciones */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #495057;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.icon svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.icon:hover {
+  background: #f8f9fa;
+  color: #007bff;
+}
+
+.iconMobile {
+  display: flex;
+}
+
+@media (min-width: 768px) {
+  .iconMobile {
+    display: none;
+  }
+}
+
+.cart {
+  position: relative;
+}
+
+.cartBadge {
+  position: absolute;
+  top: -0.25rem;
+  right: -0.25rem;
+  background: #007bff;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.125rem 0.375rem;
+  border-radius: 50%;
+  min-width: 1.25rem;
+  text-align: center;
+  line-height: 1;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+}
+
+/* Menú de usuario */
+.userMenu {
+  position: relative;
+}
+
+.userDropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  background: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 0.5rem;
+  min-width: 200px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.2s ease;
+}
+
+.userMenu:hover .userDropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.userName {
+  display: block;
+  padding: 0.75rem 1rem;
+  font-weight: 500;
+  color: #212529;
+  border-bottom: 1px solid #e9ecef;
+  margin-bottom: 0.5rem;
+}
+
+.logoutBtn {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #dc3545;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.logoutBtn:hover {
+  background: #fff5f5;
+}
+
+/* Menú hamburguesa */
+.hamburger {
+  display: flex;
+  width: 2.5rem;
+  height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #495057;
+  border-radius: 0.375rem;
+  transition: all 0.2s;
+}
+
+.hamburger:hover {
+  background: #f8f9fa;
+}
+
+.hamburger svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .hamburger {
+    display: none;
+  }
+}
+
+.linkMobile {
+  display: flex;
+}
+
+@media (min-width: 768px) {
+  .linkMobile {
+    display: none;
+  }
+}
+
+/* Menú móvil */
+.mobileMenu {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid #e9ecef;
+  padding: 0.5rem 0;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mobileMenuItem {
+  padding: 1rem 1rem;
+  color: #495057;
+  text-decoration: none;
+  font-weight: 500;
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-radius: 0.375rem;
+  margin: 0 0.5rem;
+}
+
+.mobileMenuItem:hover,
+.mobileMenuItem.active {
+  background: #f8f9fa;
+  color: #007bff;
+}
+
+/* Responsive ajustes */
+@media (max-width: 767px) {
+  .content {
+    gap: 0.5rem;
+  }
+
+  .actions {
+    gap: 0.5rem;
+  }
+}
