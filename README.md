@@ -1,4 +1,4 @@
-# E-commerce Full-Stack (React + FastAPI) - Versión Lista para Usar
+# Merify Versión Lista para Usar
 
 Este proyecto es una aplicación web de comercio electrónico completa con un frontend construido en **React** y un backend en **Python** con **FastAPI**.
 
@@ -39,6 +39,7 @@ cd frontend
 
 # 2. Instala las dependencias
 cd frontend
+npm install framer-motion
 
 npm install
 
