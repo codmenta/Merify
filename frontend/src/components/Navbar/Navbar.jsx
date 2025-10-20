@@ -17,7 +17,7 @@ const Navbar = () => {
         <div className={styles.content}>
           {/* Logo y navegación principal */}
           <div className={styles.left}>
-            <Link to="/" className={styles.logo}>E-commerce</Link>
+            <Link to="/" className={styles.logo}>Merify</Link>
             
             <div className={styles.linksDesktop}>
               <button className={styles.dropdown}>

@@ -15,9 +15,7 @@ import {
 import styles from './HomePage.module.css';
 
 const HomePage = () => {
-  // ==========================================
   // ESTADO
-  // ==========================================
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -40,9 +38,7 @@ const HomePage = () => {
   // Debounce de búsqueda (espera 500ms después de que el usuario deja de escribir)
   const debouncedSearch = useDebounce(searchQuery, 500);
 
-  // ==========================================
   // OBTENER PRODUCTOS DEL BACKEND
-  // ==========================================
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -60,9 +56,7 @@ const HomePage = () => {
     fetchProducts();
   }, [toast]);
 
-  // ==========================================
   // CATEGORÍAS DINÁMICAS (desde backend)
-  // ==========================================
   const categories = useMemo(() => {
     // Extraer categorías únicas de los productos
     const uniqueCategories = [...new Set(products.map(p => p.categoria))].filter(Boolean);
@@ -77,9 +71,7 @@ const HomePage = () => {
     ];
   }, [products]);
 
-  // ==========================================
   // LÓGICA DE FILTRADO Y ORDENAMIENTO
-  // ==========================================
   const filteredProducts = useMemo(() => {
     let result = [...products];
 
@@ -152,9 +144,7 @@ const HomePage = () => {
     toast.success(`${quantity}x ${product.nombre} agregado al carrito`);
   };
 
-  // ==========================================
   // RENDER: Estado de error
-  // ==========================================
   if (error) {
     return (
       <div className={styles.homepage}>
