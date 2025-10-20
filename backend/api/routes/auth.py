@@ -5,6 +5,7 @@ from db.json_handler import load_users, save_users
 from core.security import get_password_hash, verify_password
 from models.user import User, UserCreate
 from models.token import Token
+from typing import Literal
 
 router = APIRouter()
 

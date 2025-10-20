@@ -51,12 +51,16 @@ def save_carts(carts: Dict[str, List[Dict[str, Any]]]):
     _save_data(CART_FILE, carts)
 
 def get_user_cart(email: str) -> List[Dict[str, Any]]:
-    """Obtiene el carrito de un usuario específico."""
+    if not email or not isinstance(email, str):
+        raise ValueError("Email inválido")
     carts = load_carts()
     return carts.get(email, [])
 
 def save_user_cart(email: str, cart_items: List[Dict[str, Any]]):
-    """Guarda el carrito de un usuario específico."""
+    if not email or not isinstance(email, str):
+        raise ValueError("Email inválido")
+    if not isinstance(cart_items, list):
+        raise ValueError("Los items deben ser una lista")
     carts = load_carts()
     carts[email] = cart_items
     save_carts(carts)

@@ -32,7 +32,7 @@ def get_cart(current_user: User = Depends(get_current_user)):
     cart_items = get_user_cart(current_user.email)
     return cart_items
 
-@router.post("/cart", response_model=CartItem, status_code=status.HTTP_201_CREATED)
+@router.post("/cart/summary", response_model=CartItem, status_code=status.HTTP_201_CREATED)
 def add_to_cart(
     item_data: CartItemCreate,
     current_user: User = Depends(get_current_user)
@@ -77,7 +77,7 @@ def add_to_cart(
     
     return CartItem(**new_item)
 
-@router.put("/cart/{item_id}", response_model=CartItem)
+@router.put("/cart", response_model=CartItem)
 def update_cart_item(
     item_id: int,
     item_data: CartItemUpdate,
@@ -135,13 +135,13 @@ def delete_cart_item(
     save_user_cart(current_user.email, cart_items)
     return None
 
-@router.delete("/cart", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/cart/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
 def clear_cart(current_user: User = Depends(get_current_user)):
     """Vacía el carrito del usuario."""
     clear_user_cart(current_user.email)
     return None
 
-@router.get("/cart/summary", response_model=CartResponse)
+@router.get("/cart", response_model=CartResponse)
 def get_cart_summary(current_user: User = Depends(get_current_user)):
     """Obtiene el resumen del carrito con el total."""
     cart_items = get_user_cart(current_user.email)

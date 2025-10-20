@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import List
-
+from pydantic import validator
 class CartItem(BaseModel):
     id: int
     producto_id: int

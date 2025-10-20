@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 from typing import List
+from pydantic import Field
 from datetime import datetime
 import uuid
-
 class Product(BaseModel):
     id: int
     nombre: str
@@ -22,8 +22,8 @@ class OrderCreate(BaseModel):
     total: float
 
 class Order(BaseModel):
-    id: str = str(uuid.uuid4())
-    fecha: str = datetime.now().isoformat()
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    fecha: str = Field(default_factory=lambda: datetime.now().isoformat())
     cliente_email: str
     items: List[OrderItem]
     total: float

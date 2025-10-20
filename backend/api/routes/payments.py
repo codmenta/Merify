@@ -5,6 +5,7 @@ from typing import List, Dict, Any # <-- Añadir Any
 from core.config import settings
 from core.security import get_current_user
 from models.user import User
+from fastapi import HTTPException, status
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 router = APIRouter()
@@ -29,6 +30,11 @@ def get_payment_config():
 # RUTA CORREGIDA: Sin /payments
 @router.post("/create-checkout-session")
 def create_checkout_session(request: CheckoutSessionRequest, current_user: User = Depends(get_current_user)):
+    if not request.line_items:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="El carrito no puede estar vacío"
+        )
     try:
         checkout_session = stripe.checkout.Session.create(
             line_items=request.dict()["line_items"], # Usamos el request completo
