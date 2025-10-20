@@ -1,199 +1,48 @@
-import React, { useEffect, useState, useContext } from 'react';
+// frontend/src/pages/HomePage/HomePage.jsx
+import React, { useEffect, useState, useContext, useMemo } from 'react';
 import { CartContext } from '../../context/CartContext';
-import apiClient from '../../api/apiClient';
-import Spinner from '../../components/Spinner/Spinner';
-import { Star, StarHalf, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useToast } from '../../context/ToastContext';
+import apiClient from '../../../../src/api/apiClient';
+import Hero from '../../components/Hero/Hero';
+import ProductQuickView from '../../components/ProductQuickView/ProductQuickView';
+import { Search, SlidersHorizontal, X, Eye, Star, StarHalf } from 'lucide-react';
+import { useDebounce } from '../../hooks/useDebounce';
+import { 
+  SkeletonProductGrid, 
+  SkeletonFilters, 
+  SkeletonSearchBar 
+} from '../../components/Skeleton/Skeleton';
 import styles from './HomePage.module.css';
 
-// Datos adicionales
-const mockCategories = [
-  { id: 1, nombre: 'Computadores', descripcion: 'Computadores al mejor precio.', emoji: '💻' },
-  { id: 2, nombre: 'Repuestos', descripcion: 'Repuestos para tus equipos', emoji: '🔧' },
-  { id: 3, nombre: 'Accesorios', descripcion: 'Accesorios para hacer tu día más fácil.', emoji: '🎧' },
-];
-
-const testimonials = [
-  { id: 1, nombre: 'Sarah M.', texto: 'Increíble calidad en todos los productos. Desde equipos básicos hasta gaming, cada pieza ha superado mis expectativas.', rating: 5 },
-  { id: 2, nombre: 'Alex K.', texto: 'Encontrar productos que se alineen con mis necesidades solía ser un desafío. La variedad de opciones que ofrecen es verdaderamente notable.', rating: 5 },
-  { id: 3, nombre: 'James L.', texto: 'Como alguien siempre buscando la mejor tecnología, estoy encantado de haber encontrado esta tienda. La selección es diversa y muy actual.', rating: 5 },
-];
-
-// Componentes internos
-const Hero = () => {
-  return (
-    <div className={styles.heroSection}>
-      <div className={styles.heroContent}>
-        <div className={styles.heroText}>
-          <h1 className={styles.heroTitle}>
-            TODO LO QUE NECESITAS EN UN SOLO LUGAR
-          </h1>
-          <p className={styles.heroDescription}>
-            Navega por un diverso rango de productos, diseños para ti
-          </p>
-          <button className={styles.heroButton}>
-            Compra Ahora
-          </button>
-        </div>
-        <div className={styles.heroImage}>
-          <div className={`${styles.heroStar} ${styles.heroStar1}`}>
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-            </svg>
-          </div>
-          <div className={styles.heroLaptop}>
-            <div className={styles.laptopScreen}>
-              <div className={styles.laptopBrand}>ASUS</div>
-              <div className={styles.laptopSubtitle}>REPUBLIC OF GAMERS</div>
-              <div className={styles.laptopDisplay}>
-                <div className={styles.laptopIcon}>🎮</div>
-              </div>
-            </div>
-          </div>
-          <div className={`${styles.heroStar} ${styles.heroStar2}`}>
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-            </svg>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const ProductCard = ({ product, onAddToCart }) => {
-  const formatPrice = (price) => new Intl.NumberFormat('es-CO', {
-    style: 'currency',
-    currency: 'COP',
-    maximumFractionDigits: 0
-  }).format(price);
-
-  const renderStars = (rating) => {
-    const stars = [];
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 !== 0;
-
-    for (let i = 0; i < fullStars; i++) {
-      stars.push(<Star key={i} className={`${styles.starIcon} ${styles.filled}`} />);
-    }
-    if (hasHalfStar) {
-      stars.push(<StarHalf key="half" className={`${styles.starIcon} ${styles.filled}`} />);
-    }
-    const emptyStars = 5 - Math.ceil(rating);
-    for (let i = 0; i < emptyStars; i++) {
-      stars.push(<Star key={`empty-${i}`} className={styles.starIcon} />);
-    }
-    return stars;
-  };
-
-  const rating = product.rating || 4.5;
-
-  return (
-    <div className={styles.productCard}>
-      <div className={styles.productImage}>
-        <div className={styles.productPlaceholder}>💻</div>
-      </div>
-      <div className={styles.productInfo}>
-        <h3 className={styles.productName}>{product.nombre}</h3>
-        <div className={styles.productRating}>
-          {renderStars(rating)}
-          <span className={styles.ratingValue}>{rating}/5</span>
-        </div>
-        <div className={styles.productPricing}>
-          <span className={styles.productPrice}>{formatPrice(product.precio)}</span>
-        </div>
-        <button 
-          className={styles.addToCart}
-          onClick={() => onAddToCart(product, 1)}
-        
-          aria-label={`Añadir ${product.nombre} al carrito`}
-          title={`Añadir ${product.nombre} al carrito`}
-        >
-          Añadir al Carrito
-        </button>
-      </div>
-    </div>
-  );
-};
-
-const CategoryCard = ({ category }) => {
-  return (
-    <div className={styles.categoryCard}>
-      <div className={styles.categoryImage}>
-        <div className={styles.categoryIcon}>{category.emoji}</div>
-      </div>
-      <div className={styles.categoryInfo}>
-        <h3 className={styles.categoryName}>{category.nombre}</h3>
-        <p className={styles.categoryDescription}>{category.descripcion}</p>
-      </div>
-    </div>
-  );
-};
-
-const TestimonialCard = ({ testimonial }) => {
-  const renderStars = (rating) => {
-    return Array(rating).fill(0).map((_, i) => (
-      <Star key={i} className={`${styles.starIcon} ${styles.filled}`} />
-    ));
-  };
-
-  return (
-    <div className={styles.testimonialCard}>
-      <div className={styles.testimonialStars}>
-        {renderStars(testimonial.rating)}
-      </div>
-      <div className={styles.testimonialAuthor}>
-        <h4>{testimonial.nombre}</h4>
-        <svg className={styles.verifiedIcon} viewBox="0 0 24 24" fill="currentColor">
-          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-        </svg>
-      </div>
-      <p className={styles.testimonialText}>{testimonial.texto}</p>
-    </div>
-  );
-};
-
-const Newsletter = () => {
-  const [email, setEmail] = useState('');
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    alert('¡Gracias por suscribirte! ' + email);
-    setEmail('');
-  };
-
-  return (
-    <div className={styles.newsletterSection}>
-      <div className={styles.newsletterContent}>
-        <div className={styles.newsletterText}>
-          <h2 className={styles.newsletterTitle}>¡MANTENTE AL DÍA!</h2>
-          <p className={styles.newsletterSubtitle}>RECIBE NUESTRAS ÚLTIMAS OFERTAS</p>
-        </div>
-        <form className={styles.newsletterForm} onSubmit={handleSubmit}>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email address"
-            className={styles.newsletterInput}
-            required
-          />
-          <button type="submit" className={styles.newsletterButton}>
-            Subscribe to Newsletter
-          </button>
-        </form>
-      </div>
-    </div>
-  );
-};
-
-// Componente Principal
 const HomePage = () => {
+  // ==========================================
+  // ESTADO
+  // ==========================================
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  
+  // Contextos
   const { addToCart } = useContext(CartContext);
+  const { toast } = useToast();
 
+  // Estado de filtros
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [priceRange, setPriceRange] = useState([0, 5000000]);
+  const [sortBy, setSortBy] = useState('name-asc');
+  const [showFilters, setShowFilters] = useState(false);
+
+  // Estado del modal de vista rápida
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Debounce de búsqueda (espera 500ms después de que el usuario deja de escribir)
+  const debouncedSearch = useDebounce(searchQuery, 500);
+
+  // ==========================================
+  // OBTENER PRODUCTOS DEL BACKEND
+  // ==========================================
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -202,98 +51,394 @@ const HomePage = () => {
         setProducts(response.data);
       } catch (err) {
         console.error(err);
-        setError('No se pudieron cargar los productos. Asegúrate de que el backend esté funcionando.');
+        setError('No se pudieron cargar los productos. Verifica que el backend esté funcionando.');
+        toast.error('Error al cargar productos');
       } finally {
         setLoading(false);
       }
     };
     fetchProducts();
-  }, []);
+  }, [toast]);
 
-  const nextTestimonial = () => {
-    setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+  // ==========================================
+  // CATEGORÍAS DINÁMICAS (desde backend)
+  // ==========================================
+  const categories = useMemo(() => {
+    // Extraer categorías únicas de los productos
+    const uniqueCategories = [...new Set(products.map(p => p.categoria))].filter(Boolean);
+    
+    return [
+      { id: 'all', nombre: 'Todas', count: products.length },
+      ...uniqueCategories.map(cat => ({
+        id: cat,
+        nombre: cat,
+        count: products.filter(p => p.categoria === cat).length
+      }))
+    ];
+  }, [products]);
+
+  // ==========================================
+  // LÓGICA DE FILTRADO Y ORDENAMIENTO
+  // ==========================================
+  const filteredProducts = useMemo(() => {
+    let result = [...products];
+
+    // 1. Filtrar por búsqueda (con debounce)
+    if (debouncedSearch) {
+      result = result.filter(product =>
+        product.nombre.toLowerCase().includes(debouncedSearch.toLowerCase())
+      );
+    }
+
+    // 2. Filtrar por categoría
+    if (selectedCategory !== 'all') {
+      result = result.filter(product => product.categoria === selectedCategory);
+    }
+
+    // 3. Filtrar por rango de precio
+    result = result.filter(
+      product => product.precio >= priceRange[0] && product.precio <= priceRange[1]
+    );
+
+    // 4. Ordenar según criterio seleccionado
+    const [field, order] = sortBy.split('-');
+    result.sort((a, b) => {
+      let comparison = 0;
+      
+      if (field === 'name') {
+        comparison = a.nombre.localeCompare(b.nombre);
+      } else if (field === 'price') {
+        comparison = a.precio - b.precio;
+      } else if (field === 'rating') {
+        comparison = (a.rating || 0) - (b.rating || 0);
+      }
+
+      return order === 'asc' ? comparison : -comparison;
+    });
+
+    return result;
+  }, [products, debouncedSearch, selectedCategory, priceRange, sortBy]);
+
+  // ==========================================
+  // FUNCIONES AUXILIARES
+  // ==========================================
+  const resetFilters = () => {
+    setSearchQuery('');
+    setSelectedCategory('all');
+    setPriceRange([0, 5000000]);
+    setSortBy('name-asc');
   };
 
-  const prevTestimonial = () => {
-    setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+  const activeFiltersCount = [
+    selectedCategory !== 'all',
+    priceRange[0] > 0 || priceRange[1] < 5000000,
+  ].filter(Boolean).length;
+
+  const formatPrice = (price) =>
+    new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      maximumFractionDigits: 0
+    }).format(price);
+
+  // Funciones del modal de vista rápida
+  const handleQuickView = (product) => {
+    setSelectedProduct(product);
+    setIsModalOpen(true);
   };
 
-  if (loading) return <Spinner />;
-  if (error) return <p className="error-message">{error}</p>;
+  const handleAddToCartFromModal = (product, quantity) => {
+    addToCart(product, quantity);
+    toast.success(`${quantity}x ${product.nombre} agregado al carrito`);
+  };
 
-  const newProducts = products.slice(0, 4);
-  const bestSellers = products.slice(4, 8);
+  // ==========================================
+  // RENDER: Estado de error
+  // ==========================================
+  if (error) {
+    return (
+      <div className={styles.homepage}>
+        <Hero />
+        <div className={styles.errorContainer}>
+          <div className={styles.errorIcon}>⚠️</div>
+          <h2>Error al cargar los productos</h2>
+          <p>{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className={styles.retryButton}
+          >
+            Reintentar
+          </button>
+        </div>
+      </div>
+    );
+  }
 
+  // ==========================================
+  // RENDER PRINCIPAL
+  // ==========================================
   return (
     <div className={styles.homepage}>
+      {/* Hero Section */}
       <Hero />
 
-      {/* Nuevos Productos */}
+      {/* SECCIÓN DE FILTROS */}
+      <section className={styles.filtersSection}>
+        <div className={styles.filtersContainer}>
+          
+          {loading ? (
+            // Skeleton durante carga
+            <SkeletonSearchBar />
+          ) : (
+            <>
+              {/* Header con búsqueda y acciones */}
+              <div className={styles.filtersHeader}>
+                
+                {/* Barra de búsqueda */}
+                <div className={styles.searchWrapper}>
+                  <Search className={styles.searchIcon} size={20} />
+                  <input
+                    type="text"
+                    placeholder="Buscar productos..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className={styles.searchInput}
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className={styles.searchClear}
+                      aria-label="Limpiar búsqueda"
+                    >
+                      <X size={18} />
+                    </button>
+                  )}
+                </div>
+
+                {/* Botón de filtros (móvil) */}
+                <button
+                  onClick={() => setShowFilters(!showFilters)}
+                  className={`${styles.filtersToggle} ${showFilters ? styles.active : ''}`}
+                >
+                  <SlidersHorizontal size={18} />
+                  Filtros
+                  {activeFiltersCount > 0 && (
+                    <span className={styles.filtersBadge}>
+                      {activeFiltersCount}
+                    </span>
+                  )}
+                </button>
+
+                {/* Ordenamiento */}
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className={styles.sortSelect}
+                >
+                  <option value="name-asc">Nombre A-Z</option>
+                  <option value="name-desc">Nombre Z-A</option>
+                  <option value="price-asc">Precio: Menor a Mayor</option>
+                  <option value="price-desc">Precio: Mayor a Menor</option>
+                  <option value="rating-desc">Mejor Valorados</option>
+                </select>
+              </div>
+
+              {/* Contador de resultados */}
+              <div className={styles.resultsCount}>
+                Mostrando <strong>{filteredProducts.length}</strong>{' '}
+                {filteredProducts.length === 1 ? 'producto' : 'productos'}
+                {debouncedSearch && ` para "${debouncedSearch}"`}
+              </div>
+            </>
+          )}
+        </div>
+      </section>
+
+      {/* CONTENIDO PRINCIPAL: FILTROS + PRODUCTOS */}
       <section className={styles.productsSection}>
-        <h2 className={styles.sectionTitle}>NUEVOS PRODUCTOS</h2>
-        <div className={styles.productsGrid}>
-          {newProducts.map(product => (
-            <ProductCard key={product.id} product={product} onAddToCart={addToCart} />
-          ))}
-        </div>
-        <div className={styles.sectionAction}>
-          <button className={styles.expandButton}>Expandir</button>
+        <div className={styles.productsContainer}>
+          
+          {/* SIDEBAR DE FILTROS */}
+          {showFilters && (
+            <>
+              {loading ? (
+                // Skeleton del sidebar
+                <SkeletonFilters />
+              ) : (
+                <aside className={styles.filtersSidebar}>
+                  <div className={styles.filtersHeaderSidebar}>
+                    <h3>Filtros</h3>
+                    {activeFiltersCount > 0 && (
+                      <button onClick={resetFilters} className={styles.clearFilters}>
+                        Limpiar todo
+                      </button>
+                    )}
+                  </div>
+
+                  {/* CATEGORÍAS */}
+                  <div className={styles.filterGroup}>
+                    <h4 className={styles.filterTitle}>Categorías</h4>
+                    <div className={styles.categoryList}>
+                      {categories.map(cat => (
+                        <label
+                          key={cat.id}
+                          className={`${styles.categoryItem} ${
+                            selectedCategory === cat.id ? styles.active : ''
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="category"
+                            value={cat.id}
+                            checked={selectedCategory === cat.id}
+                            onChange={(e) => setSelectedCategory(e.target.value)}
+                          />
+                          <span className={styles.categoryName}>{cat.nombre}</span>
+                          <span className={styles.categoryCount}>{cat.count}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* RANGO DE PRECIO */}
+                  <div className={styles.filterGroup}>
+                    <h4 className={styles.filterTitle}>Rango de Precio</h4>
+                    <div className={styles.priceDisplay}>
+                      <span>{formatPrice(priceRange[0])}</span>
+                      <span>{formatPrice(priceRange[1])}</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="5000000"
+                      step="100000"
+                      value={priceRange[1]}
+                      onChange={(e) => setPriceRange([0, parseInt(e.target.value)])}
+                      className={styles.priceRange}
+                    />
+                    <div className={styles.priceLabels}>
+                      <span>$0</span>
+                      <span>$5,000,000</span>
+                    </div>
+                  </div>
+                </aside>
+              )}
+            </>
+          )}
+
+          {/* GRID DE PRODUCTOS */}
+          <main className={styles.productsGrid}>
+            {loading ? (
+              // Skeleton del grid
+              <SkeletonProductGrid count={8} />
+            ) : filteredProducts.length === 0 ? (
+              // Sin resultados
+              <div className={styles.noResults}>
+                <div className={styles.noResultsIcon}>🔍</div>
+                <h3>No se encontraron productos</h3>
+                <p>Intenta ajustar tus filtros o búsqueda</p>
+                <button onClick={resetFilters} className={styles.resetButton}>
+                  Limpiar filtros
+                </button>
+              </div>
+            ) : (
+              // Lista de productos
+              <div className={styles.productsList}>
+                {filteredProducts.map(product => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onAddToCart={addToCart}
+                    onQuickView={handleQuickView}
+                    formatPrice={formatPrice}
+                  />
+                ))}
+              </div>
+            )}
+          </main>
         </div>
       </section>
 
-      {/* Más Vendidos */}
-      {bestSellers.length > 0 && (
-        <section className={styles.productsSection}>
-          <h2 className={styles.sectionTitle}>MÁS VENDIDOS</h2>
-          <div className={styles.productsGrid}>
-            {bestSellers.map(product => (
-              <ProductCard key={product.id} product={product} onAddToCart={addToCart} />
-            ))}
-          </div>
-          <div className={styles.sectionAction}>
-            <button className={styles.expandButton}>Expandir</button>
-          </div>
-        </section>
-      )}
+      {/* MODAL DE VISTA RÁPIDA */}
+      <ProductQuickView
+        product={selectedProduct}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onAddToCart={handleAddToCartFromModal}
+      />
+    </div>
+  );
+};
 
-      {/* Categorías */}
-      <section className={styles.categoriesSection}>
-        <div className={styles.categoriesContainer}>
-          <h2 className={styles.sectionTitle}>CATEGORÍAS</h2>
-          <div className={styles.categoriesGrid}>
-            {mockCategories.map(category => (
-              <CategoryCard key={category.id} category={category} />
-            ))}
-          </div>
-        </div>
-      </section>
+// ==========================================
+// COMPONENTE: ProductCard
+// ==========================================
+const ProductCard = ({ product, onAddToCart, onQuickView, formatPrice }) => {
+  const rating = product.rating || 4.5;
 
-      {/* Comentarios */}
-      <section className={styles.testimonialsSection}>
-        <div className={styles.testimonialsHeader}>
-          <h2 className={styles.sectionTitle}>COMENTARIOS</h2>
-          <div className={styles.testimonialsControls}>
-            <button onClick={prevTestimonial} className={styles.testimonialNav}>
-              <ChevronLeft />
-            </button>
-            <button onClick={nextTestimonial} className={styles.testimonialNav}>
-              <ChevronRight />
-            </button>
-          </div>
-        </div>
-        <div className={styles.testimonialsGrid}>
-          {testimonials.map((testimonial, index) => (
-            <div
-              key={testimonial.id}
-              className={`${styles.testimonialWrapper} ${index === currentTestimonial ? styles.active : ''}`}
-            >
-              <TestimonialCard testimonial={testimonial} />
-            </div>
-          ))}
-        </div>
-      </section>
+  const renderStars = (rating) => {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 !== 0;
 
-      <Newsletter />
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(<Star key={i} className={`${styles.starIcon} ${styles.filled}`} size={16} />);
+    }
+    if (hasHalfStar) {
+      stars.push(<StarHalf key="half" className={`${styles.starIcon} ${styles.filled}`} size={16} />);
+    }
+    const emptyStars = 5 - Math.ceil(rating);
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push(<Star key={`empty-${i}`} className={styles.starIcon} size={16} />);
+    }
+    return stars;
+  };
+
+  return (
+    <div className={styles.productCard}>
+      <div className={styles.productImage}>
+        <div className={styles.productPlaceholder}>💻</div>
+        
+        {/* Botón de vista rápida (aparece al hover) */}
+        <button
+          onClick={() => onQuickView(product)}
+          className={styles.quickViewBtn}
+          aria-label="Vista rápida del producto"
+        >
+          <Eye size={18} />
+          Vista Rápida
+        </button>
+      </div>
+
+      <div className={styles.productInfo}>
+        {/* Categoría */}
+        <div className={styles.productCategory}>
+          {product.categoria || 'General'}
+        </div>
+        
+        {/* Nombre */}
+        <h3 className={styles.productName}>{product.nombre}</h3>
+        
+        {/* Rating */}
+        <div className={styles.productRating}>
+          {renderStars(rating)}
+          <span className={styles.ratingValue}>{rating}/5</span>
+        </div>
+        
+        {/* Precio */}
+        <div className={styles.productPricing}>
+          <span className={styles.productPrice}>{formatPrice(product.precio)}</span>
+        </div>
+        
+        {/* Botón agregar al carrito */}
+        <button
+          className={styles.addToCart}
+          onClick={() => onAddToCart(product, 1)}
+          aria-label={`Añadir ${product.nombre} al carrito`}
+        >
+          Añadir al Carrito
+        </button>
+      </div>
     </div>
   );
 };

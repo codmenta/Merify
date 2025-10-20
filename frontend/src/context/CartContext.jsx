@@ -1,5 +1,7 @@
+// frontend/src/context/CartContext.jsx
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { AuthContext } from './AuthContext';
+import { useToast } from './ToastContext'; // NUEVO
 import apiClient from '../api/apiClient';
 
 export const CartContext = createContext();
@@ -8,6 +10,7 @@ export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(false);
   const { user, token } = useContext(AuthContext);
+  const { toast } = useToast(); // NUEVO
 
   // ✅ Cargar carrito desde el backend cuando el usuario inicia sesión
   useEffect(() => {
@@ -26,6 +29,7 @@ export const CartProvider = ({ children }) => {
       setCart(response.data || []);
     } catch (error) {
       console.error('Error al cargar el carrito:', error);
+      toast.error('Error al cargar el carrito'); // NUEVO
       setCart([]);
     } finally {
       setLoading(false);
@@ -35,7 +39,7 @@ export const CartProvider = ({ children }) => {
   // Función para agregar un producto al carrito
   const addToCart = async (product, quantity = 1) => {
     if (!user) {
-      alert('Debes iniciar sesión para agregar productos al carrito');
+      toast.warning('Debes iniciar sesión para agregar productos al carrito'); // NUEVO
       return;
     }
 
@@ -48,11 +52,14 @@ export const CartProvider = ({ children }) => {
       // Recargar el carrito desde el backend
       await fetchCart();
       
+      // NUEVO: Toast de éxito
+      toast.success(`${product.nombre} agregado al carrito`);
+      
       return response.data;
     } catch (error) {
       console.error('Error al agregar al carrito:', error);
       const errorMessage = error.response?.data?.detail || 'Error al agregar el producto al carrito';
-      alert(errorMessage);
+      toast.error(errorMessage); // NUEVO
     }
   };
 
@@ -63,9 +70,10 @@ export const CartProvider = ({ children }) => {
     try {
       await apiClient.delete(`/cart/${itemId}`);
       await fetchCart();
+      toast.success('Producto eliminado del carrito'); // NUEVO
     } catch (error) {
       console.error('Error al eliminar del carrito:', error);
-      alert('Error al eliminar el producto');
+      toast.error('Error al eliminar el producto'); // NUEVO
     }
   };
 
@@ -82,7 +90,7 @@ export const CartProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Error al actualizar cantidad:', error);
-      alert('Error al actualizar la cantidad');
+      toast.error('Error al actualizar la cantidad'); // NUEVO
     }
   };
 
@@ -93,9 +101,10 @@ export const CartProvider = ({ children }) => {
     try {
       await apiClient.delete('/cart');
       setCart([]);
+      toast.success('Carrito vaciado'); // NUEVO
     } catch (error) {
       console.error('Error al vaciar el carrito:', error);
-      alert('Error al vaciar el carrito');
+      toast.error('Error al vaciar el carrito'); // NUEVO
     }
   };
 

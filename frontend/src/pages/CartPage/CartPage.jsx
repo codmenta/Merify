@@ -3,8 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { CartContext } from '../../context/CartContext';
 import { AuthContext } from '../../context/AuthContext';
-import apiClient from '../../api/apiClient';
+import apiClient from '../../../../src/api/apiClient';
 import styles from './CartPage.module.css';
+import { useToast } from '../../context/ToastContext'; // NUEVO
+
+// 1. IMPORTAMOS useState y useEffect
 
 // 2. HEMOS QUITADO la carga estática de Stripe de aquí.
 // Ahora se cargará dinámicamente.
@@ -13,6 +16,9 @@ const CartPage = () => {
   const { cart, removeFromCart, updateQuantity, clearCart, loading } = useContext(CartContext);
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { toast } = useToast(); // NUEVO
+
+  // --- INICIO DE LA LÓGICA DE STRIPE ---
 
   // 3. NUEVO ESTADO: Guardará la instancia de Stripe una vez que tengamos la clave.
   const [stripePromise, setStripePromise] = useState(null);
@@ -48,7 +54,7 @@ const CartPage = () => {
   const handleCheckout = async () => {
     // Verificación de seguridad: El usuario debe estar logueado.
     if (!user) {
-      alert("Debes iniciar sesión para proceder al pago.");
+      toast.warning("Debes iniciar sesión para proceder al pago"); // ✅ NUEVO
       navigate('/login');
       return;
     }
@@ -89,9 +95,13 @@ const CartPage = () => {
       if (error) {
         alert(error.message);
       }
+      
     } catch (error) {
+      toast.error("Hubo un error al preparar tu pago"); // ✅ NUEVO
       const errorMessage = error.response?.data?.detail || "Hubo un error al preparar tu pago.";
       alert(errorMessage);
+      console.error("Error al crear la sesión de pago:", error);
+      throw error;
     }
   };
 
