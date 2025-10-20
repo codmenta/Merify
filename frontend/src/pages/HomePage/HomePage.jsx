@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useContext, useMemo } from 'react';
 import { CartContext } from '../../context/CartContext';
 import { useToast } from '../../context/ToastContext';
-import apiClient from '../../../../src/api/apiClient';
+import apiClient from '../../api/apiClient';
 import Hero from '../../components/Hero/Hero';
 import ProductQuickView from '../../components/ProductQuickView/ProductQuickView';
 import { Search, SlidersHorizontal, X, Eye, Star, StarHalf } from 'lucide-react';

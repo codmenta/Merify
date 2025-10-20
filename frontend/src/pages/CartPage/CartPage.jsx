@@ -1,31 +1,26 @@
-import React, { useState, useEffect, useContext } from 'react'; // 1. IMPORTAMOS useState y useEffect
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { CartContext } from '../../context/CartContext';
 import { AuthContext } from '../../context/AuthContext';
-import apiClient from '../../../../src/api/apiClient';
+import apiClient from '../../api/apiClient';
 import styles from './CartPage.module.css';
-import { useToast } from '../../context/ToastContext'; // NUEVO
-
-// 1. IMPORTAMOS useState y useEffect
-
-// 2. HEMOS QUITADO la carga estática de Stripe de aquí.
-// Ahora se cargará dinámicamente.
+import { useToast } from '../../context/ToastContext';
 
 const CartPage = () => {
   const { cart, removeFromCart, updateQuantity, clearCart, loading } = useContext(CartContext);
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
-  const { toast } = useToast(); // NUEVO
+  const { toast } = useToast();
 
   // --- INICIO DE LA LÓGICA DE STRIPE ---
 
-  // 3. NUEVO ESTADO: Guardará la instancia de Stripe una vez que tengamos la clave.
+  // NUEVO ESTADO: Guardará la instancia de Stripe una vez que tengamos la clave.
   const [stripePromise, setStripePromise] = useState(null);
 
-  // 4. NUEVO EFECTO: Se ejecuta una sola vez cuando el componente se monta.
+  // NUEVO EFECTO: Se ejecuta una sola vez cuando el componente se monta.
   // Su trabajo es pedirle la clave publicable a nuestro backend.
-   useEffect(() => {
+  useEffect(() => {
     apiClient.get('/payments/config')
       .then(response => {
         // --- LÍNEA DE DEPURACIÓN CRUCIAL ---
@@ -54,7 +49,7 @@ const CartPage = () => {
   const handleCheckout = async () => {
     // Verificación de seguridad: El usuario debe estar logueado.
     if (!user) {
-      toast.warning("Debes iniciar sesión para proceder al pago"); // ✅ NUEVO
+      toast.warning("Debes iniciar sesión para proceder al pago");
       navigate('/login');
       return;
     }
@@ -73,7 +68,7 @@ const CartPage = () => {
         product_data: {
           name: item.nombre,
         },
-        unit_amount: Math.round(item.precio * 100), // Usamos Math.round por seguridad
+        unit_amount: Math.round(item.precio * 100),
       },
       quantity: item.cantidad,
     }));
@@ -97,7 +92,7 @@ const CartPage = () => {
       }
       
     } catch (error) {
-      toast.error("Hubo un error al preparar tu pago"); // ✅ NUEVO
+      toast.error("Hubo un error al preparar tu pago");
       const errorMessage = error.response?.data?.detail || "Hubo un error al preparar tu pago.";
       alert(errorMessage);
       console.error("Error al crear la sesión de pago:", error);
@@ -111,8 +106,6 @@ const CartPage = () => {
       currency: 'COP',
       maximumFractionDigits: 0
     }).format(value);
-
-  // --- El resto del JSX y la lógica de renderizado permanece igual ---
 
   if (!user) {
     return (
@@ -186,7 +179,6 @@ const CartPage = () => {
           <button 
             className={styles.checkoutBtn} 
             onClick={handleCheckout}
-            // 5. El botón se deshabilita mientras Stripe se carga
             disabled={!stripePromise || loading} 
           >
             {stripePromise ? 'Pagar con Tarjeta' : 'Cargando...'}
