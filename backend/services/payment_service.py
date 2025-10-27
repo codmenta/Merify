@@ -53,8 +53,8 @@ class PaymentService:
         gateway_name: str,
         line_items: List[Dict[str, Any]],
         customer_email: str,
-        success_url: str = "http://localhost:5174/order/success",
-        cancel_url: str = "http://localhost:5174/cart"
+        success_url: str = "http://localhost:5173/order/success",
+        cancel_url: str = "http://localhost:5173/cart"
     ) -> Dict[str, Any]:
         """
         Procesa un checkout usando la pasarela especificada.

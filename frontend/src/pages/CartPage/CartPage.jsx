@@ -105,19 +105,25 @@ const CartPage = () => {
         customer_email: user.email,
       });
 
-      const { sessionId } = response.data;
-      console.log('✅ Sesión de pago creada:', { sessionId });
+      // Extraer la información de la sesión
+      const { sessionId, url } = response.data;
+      console.log('✅ Sesión de pago creada:', { sessionId, url });
 
-      console.log('🔄 Redirigiendo a Stripe Checkout...');
-      const { error } = await stripe.redirectToCheckout({
-        sessionId: sessionId,
-      });
+      if (url) {
+        // Si tenemos una URL, redirigir directamente
+        window.location.href = url;
+      } else {
+        // Si no hay URL, usar el método tradicional de Stripe
+        console.log('🔄 Redirigiendo a Stripe Checkout...');
+        const { error } = await stripe.redirectToCheckout({
+          sessionId: sessionId,
+        });
 
-      if (error) {
-        console.error('❌ Error en Stripe Checkout:', error);
-        alert(error.message);
+        if (error) {
+          console.error('❌ Error en Stripe Checkout:', error);
+          alert(error.message);
+        }
       }
-      
     } catch (error) {
       console.group('❌ Error en el proceso de checkout');
       console.error('Detalles del error:', error);
