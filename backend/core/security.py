@@ -31,7 +31,8 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
     else:
-        from datetime import datetime, timedelta, timezone
+        # Usar las importaciones del módulo en lugar de reimportar dentro
+        # de la función (evita UnboundLocalError en Python).
         expire = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     
     to_encode.update({"exp": expire})

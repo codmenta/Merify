@@ -10,6 +10,7 @@
 /* ==========================================
    SECCIÓN DE FILTROS
    ========================================== */
+
 .filtersSection {
   max-width: 1200px;
   margin: 0 auto;
@@ -28,9 +29,10 @@
 .filtersHeader {
   display: flex;
   gap: 1rem;
-  flex-wrap: wrap;
-  align-items: center;
+  /* flex-wrap: wrap; */ /* Ya no es tan necesario */
+  align-items: flex-start; /* Alinea los items a la izquierda */
   margin-bottom: 1rem;
+  flex-direction: column; /* Apila los filtros verticalmente */
 }
 
 /* ==========================================

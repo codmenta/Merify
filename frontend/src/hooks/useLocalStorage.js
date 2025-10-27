@@ -2,6 +2,13 @@ import { useState, useEffect } from 'react';
 
 function getStorageValue(key, defaultValue) {
   if (typeof window !== "undefined") {
+    // For security/UX: ignore persisted auth values on cold start so the app
+    // always begins in a logged-out state. This ensures the frontend does
+    // not auto-login from leftover localStorage tokens/users.
+    if (key === 'token' || key === 'user') {
+      return defaultValue;
+    }
+
     const saved = localStorage.getItem(key);
     try {
       const initial = saved ? JSON.parse(saved) : defaultValue;
@@ -20,11 +27,12 @@ export const useLocalStorage = (key, defaultValue) => {
   });
 
   useEffect(() => {
-    if (value === undefined) {
-        localStorage.removeItem(key);
-    } else {
-        localStorage.setItem(key, JSON.stringify(value));
-    }
+  // Treat `null` and `undefined` as absence -> remove from storage
+  if (value === undefined || value === null) {
+    localStorage.removeItem(key);
+  } else {
+    localStorage.setItem(key, JSON.stringify(value));
+  }
   }, [key, value]);
 
   return [value, setValue];

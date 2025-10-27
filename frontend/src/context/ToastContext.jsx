@@ -1,11 +1,10 @@
 import React, { createContext, useState, useContext, useCallback } from 'react';
+import { AuthContext } from './AuthContext';
 import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide-react';
 
 // ==========================================
 // PASO 1: Context para manejar toasts globalmente
 // ==========================================
-// ¿Por qué? Necesitamos que cualquier componente pueda mostrar notificaciones
-// sin pasar props por toda la app (prop drilling)
 
 const ToastContext = createContext();
 
@@ -22,18 +21,35 @@ export const useToast = () => {
 // PASO 2: Provider que envuelve la app
 // ==========================================
 export const ToastProvider = ({ children }) => {
-  // Array de toasts activos (cada uno con id único)
   const [toasts, setToasts] = useState([]);
+  const idRef = React.useRef(0);
+  const authContext = useContext(AuthContext);
+  const currentUser = authContext?.user;
 
   // Función para agregar un toast
   // useCallback evita que se recree en cada render
   const addToast = useCallback((message, type = 'info', duration = 3000) => {
-    const id = Date.now(); // ID único basado en timestamp
+    // Lista de palabras clave que consideramos relacionadas a acciones que
+    // sólo deberían mostrarse cuando el usuario está autenticado.
+    const blockedKeywords = ['agregado', 'agregó', 'enviado', 'enviar', 'carrito', 'sesión', 'registr'];
+    const msgLower = String(message || '').toLowerCase();
+
+    if (!currentUser && type === 'success') {
+      for (const kw of blockedKeywords) {
+        if (msgLower.includes(kw)) {
+          // Ignorar este toast cuando no hay usuario autenticado
+          return null;
+        }
+      }
+    }
+    // Generador de IDs simple y seguro para evitar colisiones cuando se
+    // crean varios toasts rápidamente. Usamos un contador incremental.
+    const id = ++idRef.current;
     
     const newToast = {
       id,
       message,
-      type, // 'success', 'error', 'warning', 'info'
+      type,
       duration
     };
 

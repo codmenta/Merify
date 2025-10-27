@@ -33,6 +33,20 @@ export const AuthProvider = ({ children }) => {
     }
   }, [token, user, fetchUser]);
 
+  // Asegurarnos de empezar fuera de sesión: eliminar cualquier token/user
+  // persistido en el navegador al montar el provider.
+  useEffect(() => {
+    try {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    } catch (e) {
+      // Ignorar si no hay window
+    }
+    setUser(null);
+    setToken(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Función de login
   const login = async (email, password) => {
     try {

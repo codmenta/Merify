@@ -50,6 +50,8 @@ const LoginPage = () => {
         <button type="submit" className="form-button">Entrar</button>
       </form>
       <Link to="/register" className="form-link">¿No tienes cuenta? Regístrate</Link>
+  <br />
+  <Link to="/forgot" className="form-link">¿Olvidaste tu contraseña?</Link>
     </div>
   );
 };

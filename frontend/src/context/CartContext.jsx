@@ -38,7 +38,8 @@ export const CartProvider = ({ children }) => {
 
   // Función para agregar un producto al carrito
   const addToCart = async (product, quantity = 1) => {
-    if (!user) {
+    const isLoggedIn = Boolean(user && token);
+    if (!isLoggedIn) {
       toast.warning('Debes iniciar sesión para agregar productos al carrito'); // NUEVO
       return;
     }
@@ -52,8 +53,10 @@ export const CartProvider = ({ children }) => {
       // Recargar el carrito desde el backend
       await fetchCart();
       
-      // NUEVO: Toast de éxito
-      toast.success(`${product.nombre} agregado al carrito`);
+      // NUEVO: Toast de éxito — mostrar sólo si el usuario está logeado y la petición fue exitosa
+      if (isLoggedIn && response && response.status && response.status < 400) {
+        toast.success(`${product.nombre} agregado al carrito`);
+      }
       
       return response.data;
     } catch (error) {
@@ -65,12 +68,13 @@ export const CartProvider = ({ children }) => {
 
   // Función para eliminar un producto del carrito
   const removeFromCart = async (itemId) => {
-    if (!user) return;
+    const isLoggedIn = Boolean(user && token);
+    if (!isLoggedIn) return;
 
     try {
       await apiClient.delete(`/cart/${itemId}`);
       await fetchCart();
-      toast.success('Producto eliminado del carrito'); // NUEVO
+  if (isLoggedIn) toast.success('Producto eliminado del carrito'); // NUEVO
     } catch (error) {
       console.error('Error al eliminar del carrito:', error);
       toast.error('Error al eliminar el producto'); // NUEVO
@@ -79,7 +83,8 @@ export const CartProvider = ({ children }) => {
 
   // Función para actualizar la cantidad de un producto
   const updateQuantity = async (itemId, newQuantity) => {
-    if (!user) return;
+    const isLoggedIn = Boolean(user && token);
+    if (!isLoggedIn) return;
 
     try {
       if (newQuantity <= 0) {
@@ -96,12 +101,13 @@ export const CartProvider = ({ children }) => {
 
   // Función para vaciar el carrito
   const clearCart = async () => {
-    if (!user) return;
+    const isLoggedIn = Boolean(user && token);
+    if (!isLoggedIn) return;
 
     try {
       await apiClient.delete('/cart');
       setCart([]);
-      toast.success('Carrito vaciado'); // NUEVO
+  if (isLoggedIn) toast.success('Carrito vaciado'); // NUEVO
     } catch (error) {
       console.error('Error al vaciar el carrito:', error);
       toast.error('Error al vaciar el carrito'); // NUEVO
