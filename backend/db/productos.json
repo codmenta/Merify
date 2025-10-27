@@ -8,7 +8,12 @@
       "marca": "Intel",
       "imagen": "",
       "destacado": true,
-      "descripcion": "Procesador de 24 núcleos y 32 hilos, frecuencia turbo de hasta 5.8 GHz"
+      "descripcion": "Procesador de 24 núcleos y 32 hilos, frecuencia turbo de hasta 5.8 GHz",
+      "vendor_id": "vendor@merify.com",
+      "vendor_name": "Vendedor Demo",
+      "status": "active",
+      "stock": 10,
+      "created_at": "2025-01-01T00:00:00"
     },
     {
       "id": 2,
@@ -18,7 +23,12 @@
       "marca": "NVIDIA",
       "imagen": "",
       "destacado": true,
-      "descripcion": "16GB GDDR6X, ray tracing y DLSS 3.0"
+      "descripcion": "16GB GDDR6X, ray tracing y DLSS 3.0",
+      "vendor_id": "vendor@merify.com",
+      "vendor_name": "Vendedor Demo",
+      "status": "active",
+      "stock": 10,
+      "created_at": "2025-01-01T00:00:00"
     },
     {
       "id": 3,
@@ -28,7 +38,12 @@
       "marca": "Samsung",
       "imagen": "",
       "destacado": true,
-      "descripcion": "Velocidades de lectura hasta 7000 MB/s, PCIe 4.0 NVMe"
+      "descripcion": "Velocidades de lectura hasta 7000 MB/s, PCIe 4.0 NVMe",
+      "vendor_id": "vendor@merify.com",
+      "vendor_name": "Vendedor Demo",
+      "status": "active",
+      "stock": 10,
+      "created_at": "2025-01-01T00:00:00"
     },
     {
       "id": 4,
@@ -38,7 +53,12 @@
       "marca": "Corsair",
       "imagen": "",
       "destacado": false,
-      "descripcion": "DDR5 5600MHz, CL36, RGB"
+      "descripcion": "DDR5 5600MHz, CL36, RGB",
+      "vendor_id": "vendor@merify.com",
+      "vendor_name": "Vendedor Demo",
+      "status": "active",
+      "stock": 10,
+      "created_at": "2025-01-01T00:00:00"
     },
     {
       "id": 5,
@@ -48,7 +68,12 @@
       "marca": "ASUS",
       "imagen": "",
       "destacado": true,
-      "descripcion": "Socket LGA1700, PCIe 5.0, WiFi 6E"
+      "descripcion": "Socket LGA1700, PCIe 5.0, WiFi 6E",
+      "vendor_id": "vendor@merify.com",
+      "vendor_name": "Vendedor Demo",
+      "status": "active",
+      "stock": 10,
+      "created_at": "2025-01-01T00:00:00"
     },
     {
       "id": 6,
@@ -58,7 +83,12 @@
       "marca": "Seasonic",
       "imagen": "",
       "destacado": false,
-      "descripcion": "80 Plus Gold, modular, certificación completa"
+      "descripcion": "80 Plus Gold, modular, certificación completa",
+      "vendor_id": "vendor@merify.com",
+      "vendor_name": "Vendedor Demo",
+      "status": "active",
+      "stock": 10,
+      "created_at": "2025-01-01T00:00:00"
     },
     {
       "id": 7,
@@ -68,7 +98,12 @@
       "marca": "ASUS",
       "imagen": "",
       "destacado": false,
-      "descripcion": "QHD, 1ms, FreeSync y G-Sync compatible"
+      "descripcion": "QHD, 1ms, FreeSync y G-Sync compatible",
+      "vendor_id": "vendor@merify.com",
+      "vendor_name": "Vendedor Demo",
+      "status": "active",
+      "stock": 10,
+      "created_at": "2025-01-01T00:00:00"
     },
     {
       "id": 8,
@@ -78,7 +113,12 @@
       "marca": "Razer",
       "imagen": "",
       "destacado": false,
-      "descripcion": "Switches mecánicos Razer Green, RGB Chroma"
+      "descripcion": "Switches mecánicos Razer Green, RGB Chroma",
+      "vendor_id": "vendor@merify.com",
+      "vendor_name": "Vendedor Demo",
+      "status": "active",
+      "stock": 10,
+      "created_at": "2025-01-01T00:00:00"
     },
     {
       "id": 9,
@@ -88,7 +128,12 @@
       "marca": "AMD",
       "imagen": "",
       "destacado": true,
-      "descripcion": "16 núcleos, 32 hilos, frecuencia hasta 5.7 GHz"
+      "descripcion": "16 núcleos, 32 hilos, frecuencia hasta 5.7 GHz",
+      "vendor_id": "vendor@merify.com",
+      "vendor_name": "Vendedor Demo",
+      "status": "active",
+      "stock": 10,
+      "created_at": "2025-01-01T00:00:00"
     },
     {
       "id": 10,
@@ -98,7 +143,12 @@
       "marca": "AMD",
       "imagen": "",
       "destacado": false,
-      "descripcion": "20GB GDDR6, arquitectura RDNA 3"
+      "descripcion": "20GB GDDR6, arquitectura RDNA 3",
+      "vendor_id": "vendor@merify.com",
+      "vendor_name": "Vendedor Demo",
+      "status": "active",
+      "stock": 10,
+      "created_at": "2025-01-01T00:00:00"
     }
   ],
   "categorias": [

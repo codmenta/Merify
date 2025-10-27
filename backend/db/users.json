@@ -1,20 +1,23 @@
 {
+  "admin@merify.com": {
+    "nombre": "Administrador",
+    "email": "admin@merify.com",
+    "tipo": "admin",
+    "role": "admin",
+    "hashed_password": "$5$rounds=535000$YOUR_HASH_HERE"
+  },
+  "vendor@merify.com": {
+    "nombre": "Vendedor Demo",
+    "email": "vendor@merify.com",
+    "tipo": "vendor",
+    "role": "vendor",
+    "hashed_password": "$5$rounds=535000$YOUR_HASH_HERE"
+  },
   "ncmunozg@unimayor.edu.co": {
     "nombre": "Camilo Muñoz",
     "email": "ncmunozg@unimayor.edu.co",
     "tipo": "cliente",
+    "role": "customer",
     "hashed_password": "$5$rounds=535000$Dfcznnsj9oFBJFES$A.CixXUpjutcOxz6ioRCi/qWFGEqhWgsWTs8aiUww1D"
-  },
-  "mentailovegg@gmail.com": {
-    "nombre": "cami",
-    "email": "mentailovegg@gmail.com",
-    "tipo": "cliente",
-    "hashed_password": "$5$rounds=535000$b99y8Z2gi.QTSXYd$IciZ9VfuBLZ4FbMvFnrl1vgNHDztUpR/ABRGH9ZXyj."
-  },
-  "batma@gmail.com": {
-    "nombre": "batman",
-    "email": "batma@gmail.com",
-    "tipo": "cliente",
-    "hashed_password": "$5$rounds=535000$bvJYKWMAkZIk6w06$7rYlJ1XFsuQoeXgnfmpTlU78TgTFXwPnJBpGOh2joc1"
   }
 }

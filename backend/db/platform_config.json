@@ -1,0 +1,32 @@
+{
+  "discount": 0,
+  "shipping_policy": "Envío gratis en compras superiores a $100,000 COP. Tiempo estimado de entrega: 3-5 días hábiles para ciudades principales, 5-8 días para zonas rurales.",
+  "return_policy": "Aceptamos devoluciones dentro de los 30 días posteriores a la compra. El producto debe estar en su empaque original y sin uso.",
+  "support_email": "soporte@merify.com",
+  "support_phone": "+57 300 123 4567",
+  "tax_rate": 0.19,
+  "currency": "COP",
+  "platform_name": "Merify",
+  "platform_version": "1.0.0",
+  "maintenance_mode": false,
+  "features": {
+    "allow_guest_checkout": false,
+    "require_email_verification": false,
+    "enable_reviews": true,
+    "enable_wishlist": true,
+    "max_products_per_vendor": 100,
+    "max_images_per_product": 5
+  },
+  "payment_gateways": {
+    "stripe": {
+      "enabled": true,
+      "test_mode": true
+    },
+    "paypal": {
+      "enabled": false,
+      "test_mode": true
+    }
+  },
+  "updated_at": "2025-01-26T10:00:00",
+  "updated_by": "admin@merify.com"
+}

@@ -9,11 +9,9 @@ from typing import Literal
 from datetime import timedelta
 from jose import JWTError, jwt
 from core.config import settings
+from pydantic import BaseModel
 
 router = APIRouter()
-
-# Modelo extendido para devolver el usuario completo en el registro
-from pydantic import BaseModel
 
 class TokenWithUser(BaseModel):
     access_token: str
@@ -47,8 +45,8 @@ def register_user(form_data: UserCreate):
     # Crear token de acceso
     access_token = create_access_token(data={"sub": email})
     
-    # Preparamos los datos del usuario para la respuesta (SIN la contraseña)
-    # Reutilizamos el modelo `User` que no tiene el campo de la contraseña.
+    # Preparar datos del usuario para la respuesta (sin la contraseña)
+
     user_for_response = User(
         nombre=form_data.nombre,
         email=email,
@@ -67,18 +65,28 @@ def register_user(form_data: UserCreate):
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     """Inicia sesión y devuelve el token + datos del usuario."""
     users = load_users()
-    user_data = users.get(form_data.username.lower())
-
+    
+    # ------------------ ESTE BLOQUE DEBE ESTAR ALINEADO ASÍ ------------------
+    user_data = None
+    for user_record in users.values():
+        if user_record['email'] == form_data.username.lower():
+            user_data = user_record
+            break
+    # -------------------------------------------------------------------------
+            
     if not user_data or not verify_password(form_data.password, user_data.get("hashed_password")):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Email o contraseña incorrectos.",
             headers={"WWW-Authenticate": "Bearer"},
         )
-
-    access_token = create_access_token(data={"sub": user_data["email"]})
     
-    # Devolver token + datos del usuario
+    token_data = {
+        "sub": user_data["email"],
+        "role": user_data.get("role", "customer")
+    }
+    access_token = create_access_token(data=token_data)
+    
     user_response = User(**user_data)
     
     return TokenWithUser(

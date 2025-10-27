@@ -1,0 +1,156 @@
+/* frontend/src/pages/AdminPage/AdminPage.module.css */
+
+/* --- Layout Principal --- */
+.pageContainer {
+  min-height: 100vh;
+  background-color: #f9fafb; /* bg-gray-50 */
+}
+
+/* --- Header --- */
+.header {
+  background-color: #ffffff; /* bg-white */
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+  border-bottom: 1px solid #e5e7eb; /* border-b */
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.headerContent {
+  max-width: 1280px; /* max-w-7xl */
+  margin: 0 auto;
+  padding: 1rem; /* px-4 py-4 */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.headerTitle { font-size: 1.5rem; font-weight: 700; color: #1f2937; }
+.headerSubtitle { font-size: 0.875rem; color: #4b5563; }
+.logoutButton {
+  font-size: 0.875rem;
+  color: #4b5563;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+}
+.logoutButton:hover { color: #1f2937; background-color: #f3f4f6; }
+
+/* --- Barra de Tabs --- */
+.tabsBar {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 73px; /* Altura aproximada del header */
+  z-index: 10;
+}
+.tabsContainer { max-width: 1280px; margin: 0 auto; padding: 0 1rem; }
+.tabsList { display: flex; gap: 1rem; overflow-x: auto; }
+.tabButton {
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 2px solid transparent;
+  color: #4b5563;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.tabButton:hover { color: #1f2937; }
+.tabButtonActive {
+  border-bottom-color: #4f46e5; /* border-indigo-600 */
+  color: #4f46e5;
+}
+
+/* --- Contenido Principal --- */
+.mainContent { max-width: 1280px; margin: 0 auto; padding: 2rem 1rem; }
+.loadingSpinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 16rem; /* h-64 */
+}
+.spinner {
+  animation: spin 1s linear infinite;
+  border-radius: 9999px;
+  height: 3rem; /* h-12 */
+  width: 3rem; /* w-12 */
+  border-bottom-width: 2px;
+  border-color: #4f46e5;
+}
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* --- Paneles de Gestión --- */
+.managementPanel { background-color: #ffffff; border-radius: 0.5rem; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1); padding: 1.5rem; }
+.panelHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+.panelTitle { font-size: 1.25rem; font-weight: 700; }
+.panelItemCount { font-size: 0.875rem; color: #4b5563; }
+.itemList { display: flex; flex-direction: column; gap: 0.75rem; }
+.emptyState { text-align: center; color: #6b7280; padding: 2rem 0; }
+
+/* --- Elementos de Item (Producto, Usuario, etc.) --- */
+.itemCard {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.2s;
+}
+.itemCard:hover { background-color: #f9fafb; }
+.itemInfo { flex: 1; }
+.itemName { font-weight: 600; color: #1f2937; }
+.itemDetails { font-size: 0.875rem; color: #4b5563; }
+.itemActions { display: flex; align-items: center; gap: 0.5rem; }
+
+/* --- Badges de Estado --- */
+.statusBadge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.statusActive { background-color: #d1fae5; color: #065f46; } /* green */
+.statusPending { background-color: #fef3c7; color: #92400e; } /* yellow */
+.statusBlocked { background-color: #fee2e2; color: #991b1b; } /* red */
+
+/* --- Botones de Acción --- */
+.actionButton {
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s;
+}
+.actionApprove { color: #16a34a; }
+.actionApprove:hover { background-color: #f0fdf4; }
+.actionDelete { color: #dc2626; }
+.actionDelete:hover { background-color: #fee2e2; }
+.actionToggle { color: #ea580c; }
+.actionToggle:hover { background-color: #fff7ed; }
+
+/* --- Panel de Configuración --- */
+.settingsForm { display: flex; flex-direction: column; gap: 1rem; }
+.formField { border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 1rem; }
+.formLabel { display: block; font-weight: 600; margin-bottom: 0.5rem; }
+.formInput,
+.formTextarea {
+  width: 100%;
+  padding: 0.75rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+}
+.formInput:focus,
+.formTextarea:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px #c7d2fe;
+}
+.saveButton {
+  width: 100%;
+  background-color: #4f46e5;
+  color: #ffffff;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+.saveButton:hover { background-color: #4338ca; }
