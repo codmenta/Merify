@@ -1,0 +1,219 @@
+/* frontend/src/pages/OrderSuccessPage/OrderSuccessPage.module.css */
+
+.successPage {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.successContainer {
+  max-width: 600px;
+  width: 100%;
+  background: #fff;
+  border-radius: 1.5rem;
+  padding: 3rem 2rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  animation: slideUp 0.5s ease-out;
+}
+
+/* Icono de éxito */
+.successIcon {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 2rem;
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  animation: scaleIn 0.6s ease-out 0.2s backwards;
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+}
+
+/* Título */
+.successTitle {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #1f2937;
+  margin-bottom: 1rem;
+  animation: fadeInUp 0.6s ease-out 0.3s backwards;
+}
+
+/* Descripción */
+.successDescription {
+  font-size: 1.125rem;
+  color: #6b7280;
+  line-height: 1.7;
+  margin-bottom: 2rem;
+  animation: fadeInUp 0.6s ease-out 0.4s backwards;
+}
+
+/* Info de sesión */
+.sessionInfo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #f3f4f6;
+  padding: 1rem 1.5rem;
+  border-radius: 0.75rem;
+  margin-bottom: 2rem;
+  animation: fadeInUp 0.6s ease-out 0.5s backwards;
+}
+
+.sessionLabel {
+  font-size: 0.875rem;
+  color: #6b7280;
+  display: block;
+}
+
+.sessionId {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1f2937;
+  font-family: monospace;
+  display: block;
+}
+
+/* Tarjeta de información */
+.infoCard {
+  background: #fef3c7;
+  border: 2px solid #fbbf24;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  text-align: left;
+  animation: fadeInUp 0.6s ease-out 0.6s backwards;
+}
+
+.infoCard h3 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #92400e;
+  margin-bottom: 1rem;
+}
+
+.infoCard ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.infoCard li {
+  padding: 0.5rem 0;
+  color: #78350f;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+/* Botones de acción */
+.actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+  animation: fadeInUp 0.6s ease-out 0.7s backwards;
+}
+
+.primaryButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  border: none;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.primaryButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Texto de soporte */
+.supportText {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  animation: fadeInUp 0.6s ease-out 0.8s backwards;
+}
+
+.supportText a {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.supportText a:hover {
+  color: #5568d3;
+  text-decoration: underline;
+}
+
+/* Animaciones */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .successContainer {
+    padding: 2rem 1.5rem;
+  }
+
+  .successTitle {
+    font-size: 1.75rem;
+  }
+
+  .successIcon {
+    width: 100px;
+    height: 100px;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .primaryButton {
+    width: 100%;
+    justify-content: center;
+  }
+}

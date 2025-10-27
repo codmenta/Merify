@@ -1,0 +1,148 @@
+/* frontend/src/components/Skeleton/Skeleton.module.css */
+
+/* ==========================================
+   ANIMACIÓN SHIMMER (Efecto de brillo)
+   ========================================== */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* ==========================================
+   SKELETON BASE
+   ========================================== */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 0%,
+    #f8f8f8 20%,
+    #f0f0f0 40%,
+    #f0f0f0 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 0.5rem;
+}
+
+/* ==========================================
+   TARJETA DE PRODUCTO
+   ========================================== */
+.productCard {
+  background: #fff;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.productImage {
+  width: 100%;
+  height: 16rem;
+  border-radius: 0;
+}
+
+.productContent {
+  padding: 1.5rem;
+}
+
+.ratingRow {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+/* ==========================================
+   GRID DE PRODUCTOS
+   ========================================== */
+.productGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 0;
+}
+
+/* ==========================================
+   SIDEBAR DE FILTROS
+   ========================================== */
+.filtersSidebar {
+  background: #fff;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.filterItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+/* ==========================================
+   BARRA DE BÚSQUEDA
+   ========================================== */
+.searchBar {
+  background: #fff;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.searchBarContent {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+@media (max-width: 768px) {
+  .productGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .searchBarContent {
+    flex-direction: column;
+  }
+
+  .searchBarContent .skeleton {
+    width: 100% !important;
+  }
+}
+
+/* ==========================================
+   VARIANTE: Modo oscuro (opcional)
+   ========================================== */
+.skeletonDark {
+  background: linear-gradient(
+    90deg,
+    #2a2a2a 0%,
+    #333333 20%,
+    #2a2a2a 40%,
+    #2a2a2a 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* ==========================================
+   VARIANTE: Pulso (alternativa al shimmer)
+   ========================================== */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.skeletonPulse {
+  background: #f0f0f0;
+  animation: pulse 1.5s ease-in-out infinite;
+}
