@@ -1,8 +1,10 @@
+// frontend/src/App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ToastProvider } from './context/ToastContext';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'; // 🔥 NUEVO
 import Navbar from './components/Navbar/Navbar';
 import Footer from './components/Footer/Footer';
 import HomePage from './pages/HomePage/HomePage';
@@ -12,7 +14,7 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage/ForgotPasswordPage';
 import CartPage from './pages/CartPage/CartPage';
 import OrderSuccessPage from './pages/OrderSuccessPage/OrderSuccessPage';
 import AdminPage from './pages/AdminPage/AdminPage';     
-import VendorPage from './pages/VendorPage/VendorPage';   
+import VendorPage from './pages/VendorPage/VendorPage';
 
 function App() {
   return (
@@ -30,8 +32,26 @@ function App() {
                   <Route path="/forgot" element={<ForgotPasswordPage />} />
                   <Route path="/cart" element={<CartPage />} />
                   <Route path="/order/success" element={<OrderSuccessPage />} />
-                  <Route path="/admin" element={<AdminPage />} />
-                  <Route path="/vendor" element={<VendorPage />} />
+                  
+                  {/* 🔥 Ruta protegida para Admin */}
+                  <Route 
+                    path="/admin" 
+                    element={
+                      <ProtectedRoute allowedRoles={['admin']}>
+                        <AdminPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  
+                  {/* 🔥 Ruta protegida para Vendor (admin también puede acceder) */}
+                  <Route 
+                    path="/vendor" 
+                    element={
+                      <ProtectedRoute allowedRoles={['vendor', 'admin']}>
+                        <VendorPage />
+                      </ProtectedRoute>
+                    } 
+                  />
                 </Routes>
               </main>
               <Footer />

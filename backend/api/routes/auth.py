@@ -108,7 +108,7 @@ def forgot_password(payload: dict):
 
     users = load_users()
     if email not in users:
-        # No revelamos si el email existe; devolvemos mensaje de éxito
+        # ✅ CAMBIADO: Devolvemos el mismo mensaje pero SIN token si no existe
         return {"msg": "Si el email existe, recibirás instrucciones para resetear tu contraseña."}
 
     # Crear token de reseteo con expiración corta
@@ -117,11 +117,10 @@ def forgot_password(payload: dict):
         expires_delta=timedelta(minutes=15)
     )
 
-    # En una app real, aquí enviaríamos el token por correo. Para la simulación
-    # devolvemos el token en la respuesta para que el frontend lo muestre.
+    # ✅ CAMBIADO: Ahora SÍ devolvemos el token cuando el email existe
     return {
         "msg": "Token de reseteo generado (simulado).",
-        "reset_token": reset_token
+        "reset_token": reset_token  # ✅ ESTO SE DEVOLVERÁ AL FRONTEND
     }
 
 

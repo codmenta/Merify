@@ -50,15 +50,13 @@ app.include_router(orders.router, prefix="/api", tags=["Orders"])
 # 6. Pagos
 app.include_router(payments.router, prefix="/api/payments", tags=["Payments"])
 
-# 7. Panel de Administrador (requiere autenticación + rol admin)
+# 7. Panel de Administrador
 app.include_router(admin.router, tags=["Admin"])
 
-# 8. Panel de Vendedor (requiere autenticación + rol vendor)
+# 8. Panel de Vendedor
 app.include_router(vendor.router, tags=["Vendor"])
 
-# ==========================================
-# ENDPOINTS DE SALUD
-# ==========================================
+
 
 @app.get("/")
 def root():
@@ -87,9 +85,7 @@ def health_check():
         "message": "API funcionando correctamente"
     }
 
-# ==========================================
-# MANEJO DE ERRORES GLOBAL (OPCIONAL)
-# ==========================================
+
 
 from fastapi.responses import JSONResponse
 from fastapi import Request

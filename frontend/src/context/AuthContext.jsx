@@ -1,9 +1,18 @@
-import React, { createContext, useState, useEffect, useCallback } from 'react';
+// frontend/src/context/AuthContext.jsx
+import React, { createContext, useState, useEffect, useCallback, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useLocalStorage from '../hooks/useLocalStorage';
 import apiClient from '../api/apiClient';
 
 export const AuthContext = createContext();
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth debe usarse dentro de AuthProvider');
+  }
+  return context;
+};
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useLocalStorage('user', null);
@@ -70,8 +79,14 @@ export const AuthProvider = ({ children }) => {
       // Limpiar errores
       setError(null);
       
-      // Redirigir al home
-      navigate('/');
+      // 🔥 NUEVO: Redirigir según el rol del usuario
+      if (userData.role === 'admin') {
+        navigate('/admin');
+      } else if (userData.role === 'vendor') {
+        navigate('/vendor');
+      } else {
+        navigate('/');
+      }
     } catch (err) {
       setError("Email o contraseña incorrectos.");
       console.error("Login failed:", err);

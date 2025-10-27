@@ -1,4 +1,14 @@
 {
   "ncmunozg@unimayor.edu.co": [],
-  "batma@gmail.com": []
+  "batma@gmail.com": [],
+  "vendor@merify.com": [
+    {
+      "id": 1,
+      "producto_id": 6,
+      "nombre": "Fuente de Alimentación Seasonic 850W",
+      "precio": 600000,
+      "cantidad": 1,
+      "imagen": ""
+    }
+  ]
 }

@@ -70,3 +70,27 @@ def clear_user_cart(email: str):
     carts = load_carts()
     carts[email] = []
     save_carts(carts)
+
+def read_json(filename: str) -> Any:
+    """
+    Lee un archivo JSON genérico desde el directorio db.
+    
+    Args:
+        filename: Nombre del archivo (ej: "productos.json")
+    
+    Returns:
+        Los datos del JSON parseados
+    """
+    file_path = BASE_DIR / filename
+    return _load_data(file_path, {})
+
+def write_json(filename: str, data: Any):
+    """
+    Escribe datos a un archivo JSON en el directorio db.
+    
+    Args:
+        filename: Nombre del archivo (ej: "productos.json")
+        data: Datos a escribir
+    """
+    file_path = BASE_DIR / filename
+    _save_data(file_path, data)

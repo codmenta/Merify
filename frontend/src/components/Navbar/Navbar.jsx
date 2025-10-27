@@ -67,21 +67,35 @@ const Navbar = () => {
             </NavLink>
 
             {/* Usuario */}
-            {user ? (
-              <div className={styles.userMenu}>
-                <button className={styles.icon}>
-                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                </button>
-                <div className={styles.userDropdown}>
-                  <span className={styles.userName}>Hola, {user.nombre}</span>
-                  <button onClick={logout} className={styles.logoutBtn}>
-                    Cerrar Sesión
+              {user ? (
+                <div className={styles.userMenu}>
+                  <button className={styles.icon}>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
                   </button>
+                  <div className={styles.userDropdown}>
+                    <span className={styles.userName}>Hola, {user.nombre}</span>
+                    
+                    {/* 🔥 NUEVO: Enlaces según el rol */}
+                    {user.role === 'admin' && (
+                      <NavLink to="/admin" className={styles.dropdownLink}>
+                        📊 Panel Admin
+                      </NavLink>
+                    )}
+                    
+                    {user.role === 'vendor' && (
+                      <NavLink to="/vendor" className={styles.dropdownLink}>
+                        🏪 Panel Vendedor
+                      </NavLink>
+                    )}
+                    
+                    <button onClick={logout} className={styles.logoutBtn}>
+                      Cerrar Sesión
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ) : (
+              ) : (
               <>
                 <NavLink to="/login" className={styles.linkMobile}>
                   <svg className={styles.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -91,7 +105,7 @@ const Navbar = () => {
               </>
             )}
 
-            {/* Menú hamburguesa móvil */}
+            {/* Menú móvil */}
             <button 
               className={styles.hamburger}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -132,7 +146,7 @@ const Navbar = () => {
             <button className={styles.mobileMenuItem}>
               Tienda
             </button>
-            <NavLink to="/" className={styles.mobileMenuItem} onClick={() => setMobileMenuOpen(false)}>
+            <NavLink to="/"className={styles.mobileMenuItem} onClick={() => setMobileMenuOpen(false)}>
               En Descuento
             </NavLink>
             {!user && (

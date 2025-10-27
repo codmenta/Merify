@@ -6,9 +6,6 @@ from core.security import get_current_user
 from models.user import User
 from db.json_handler import read_json, write_json
 from datetime import datetime
-from fastapi import APIRouter, HTTPException, Depends
-from core.security import get_current_use
-router = APIRouter(prefix="/api/vendor", tags=["vendor"])
 
 # ==========================================
 # MODELOS PYDANTIC
@@ -51,10 +48,14 @@ def get_current_vendor_user(current_user: User = Depends(get_current_user)):
         )
     return current_user
 
+# ==========================================
+# ROUTER CONFIGURATION
+# ==========================================
+
 router = APIRouter(
-    prefix="/vendor", # El prefijo /api se define en main.py
+    prefix="/vendor",  # El prefijo /api se define en main.py
     tags=["Vendor"],
-    dependencies=[Depends(get_current_vendor_user)] # <-- Protege todo el router
+    dependencies=[Depends(get_current_vendor_user)]  # <-- Protege todo el router
 )
 
 # ==========================================
@@ -80,7 +81,6 @@ def get_my_products(current_user: User = Depends(get_current_vendor_user)):
 
 
 @router.post("/products", status_code=201)
-
 def create_product(product: ProductCreate, current_user: User = Depends(get_current_vendor_user)):
     """Crea un nuevo producto (requiere aprobación del admin)"""
     try:
@@ -124,7 +124,7 @@ def create_product(product: ProductCreate, current_user: User = Depends(get_curr
 def update_product(
     product_id: int,
     product_update: ProductUpdate,
-    current_user: User = Depends(verify_vendor)
+    current_user: User = Depends(get_current_vendor_user)  # ✅ CORREGIDO
 ):
     """Actualiza un producto propio del vendedor"""
     try:
@@ -163,7 +163,7 @@ def update_product(
 @router.delete("/products/{product_id}")
 def delete_product(
     product_id: int,
-    current_user: User = Depends(verify_vendor)
+    current_user: User = Depends(get_current_vendor_user)  # ✅ CORREGIDO
 ):
     """Elimina un producto propio del vendedor"""
     try:
@@ -199,7 +199,7 @@ def delete_product(
 # ==========================================
 
 @router.get("/orders")
-def get_my_orders(current_user: User = Depends(verify_vendor)):
+def get_my_orders(current_user: User = Depends(get_current_vendor_user)):  # ✅ CORREGIDO
     """Obtiene las órdenes que contienen productos del vendedor"""
     try:
         orders = read_json("orders.json")
@@ -235,7 +235,7 @@ def get_my_orders(current_user: User = Depends(verify_vendor)):
 def update_order_status(
     order_id: str,
     update: OrderStatusUpdate,
-    current_user: User = Depends(verify_vendor)
+    current_user: User = Depends(get_current_vendor_user)  # ✅ CORREGIDO
 ):
     """Actualiza el estado de una orden (ej: marcar como enviado)"""
     try:
@@ -264,7 +264,7 @@ def update_order_status(
 # ==========================================
 
 @router.get("/stats")
-def get_vendor_stats(current_user: User = Depends(verify_vendor)):
+def get_vendor_stats(current_user: User = Depends(get_current_vendor_user)):  # ✅ CORREGIDO
     """Obtiene estadísticas de ventas del vendedor"""
     try:
         data = read_json("productos.json")

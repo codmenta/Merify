@@ -5,35 +5,96 @@ import apiClient from '../../api/apiClient';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { useNavigate } from 'react-router-dom';
-import styles from './AdminPage.module.css'; // ¡IMPORTADO!
+import styles from './AdminPage.module.css';
 
 const AdminPage = () => {
-  // --- (TODA LA LÓGICA DE ESTADOS Y FUNCIONES SE MANTIENE EXACTAMENTE IGUAL) ---
   const [activeTab, setActiveTab] = useState('products');
   const [products, setProducts] = useState([]);
-  // ... resto de estados ...
-  const { user, logout } = useAuth();
-  // ... resto de lógica ...
+  const [users, setUsers] = useState([]);
+  const [payments, setPayments] = useState([]);
+  const [config, setConfig] = useState({ discount: 0, shipping_policy: '' });
+  const [loading, setLoading] = useState(false);
   
+  const { user, logout } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (!user || user.role !== 'admin') {
       navigate('/');
       return;
     }
-    // loadData(); // Consider loading data inside each tab's effect if they grow large
   }, [user, navigate]);
 
   useEffect(() => {
-      loadData();
+    loadData();
   }, [activeTab]);
 
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      if (activeTab === 'products') {
+        const res = await apiClient.get('/admin/products');
+        setProducts(res.data.products || []);
+      } else if (activeTab === 'users') {
+        const res = await apiClient.get('/admin/users');
+        setUsers(res.data.users || []);
+      } else if (activeTab === 'payments') {
+        const res = await apiClient.get('/admin/payments');
+        setPayments(res.data.payments || []);
+      } else if (activeTab === 'settings') {
+        const res = await apiClient.get('/admin/config');
+        setConfig(res.data || { discount: 0, shipping_policy: '' });
+      }
+    } catch (err) {
+      console.error('Error loading data:', err);
+      toast.error('Error al cargar los datos');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const loadData = async () => { /* ... lógica sin cambios ... */ };
-  const approveProduct = async (productId) => { /* ... lógica sin cambios ... */ };
-  const deleteProduct = async (productId) => { /* ... lógica sin cambios ... */ };
-  const toggleUserStatus = async (userId, currentStatus) => { /* ... lógica sin cambios ... */ };
-  const saveConfig = async () => { /* ... lógica sin cambios ... */ };
-  
+  const approveProduct = async (productId) => {
+    try {
+      await apiClient.patch(`/admin/products/${productId}`, { status: 'active' });
+      toast.success('Producto aprobado');
+      loadData();
+    } catch (err) {
+      toast.error('Error al aprobar producto');
+    }
+  };
+
+  const deleteProduct = async (productId) => {
+    if (!window.confirm('¿Estás seguro de eliminar este producto?')) return;
+    try {
+      await apiClient.delete(`/admin/products/${productId}`);
+      toast.success('Producto eliminado');
+      loadData();
+    } catch (err) {
+      toast.error('Error al eliminar producto');
+    }
+  };
+
+  const toggleUserStatus = async (userId, currentStatus) => {
+    const newStatus = currentStatus === 'active' ? 'blocked' : 'active';
+    try {
+      await apiClient.patch(`/admin/users/${userId}`, { status: newStatus });
+      toast.success(`Usuario ${newStatus === 'active' ? 'activado' : 'bloqueado'}`);
+      loadData();
+    } catch (err) {
+      toast.error('Error al actualizar usuario');
+    }
+  };
+
+  const saveConfig = async () => {
+    try {
+      await apiClient.post('/admin/config', config);
+      toast.success('Configuración guardada');
+    } catch (err) {
+      toast.error('Error al guardar configuración');
+    }
+  };
+
   const tabs = [
     { id: 'products', label: 'Productos', icon: Package },
     { id: 'users', label: 'Usuarios', icon: Users },
@@ -43,7 +104,6 @@ const AdminPage = () => {
 
   return (
     <div className={styles.pageContainer}>
-      {/* Header */}
       <header className={styles.header}>
         <div className={styles.headerContent}>
           <div>
@@ -54,7 +114,6 @@ const AdminPage = () => {
         </div>
       </header>
 
-      {/* Tabs */}
       <div className={styles.tabsBar}>
         <div className={styles.tabsContainer}>
           <div className={styles.tabsList}>
@@ -75,7 +134,6 @@ const AdminPage = () => {
         </div>
       </div>
 
-      {/* Content */}
       <div className={styles.mainContent}>
         {loading ? (
           <div className={styles.loadingSpinner}>
@@ -94,7 +152,7 @@ const AdminPage = () => {
   );
 };
 
-// Componentes internos usando `styles`
+// Componente de Gestión de Productos
 const ProductsManagement = ({ products, onApprove, onDelete }) => (
   <div className={styles.managementPanel}>
     <div className={styles.panelHeader}>
@@ -105,17 +163,21 @@ const ProductsManagement = ({ products, onApprove, onDelete }) => (
       {products.map(product => (
         <div key={product.id} className={styles.itemCard}>
           <div className={styles.itemInfo}>
-            <h3 className={styles.itemName}>{product.name}</h3>
-            <p className={styles.itemDetails}>Vendedor: {product.vendor_name || 'N/A'} • ${product.price}</p>
+            <h3 className={styles.itemName}>{product.nombre}</h3>
+            <p className={styles.itemDetails}>Vendedor: {product.vendor_name || 'N/A'} • ${product.precio}</p>
           </div>
           <div className={styles.itemActions}>
             <span className={`${styles.statusBadge} ${product.status === 'active' ? styles.statusActive : styles.statusPending}`}>
               {product.status === 'active' ? 'Activo' : 'Pendiente'}
             </span>
             {product.status === 'pending' && (
-              <button onClick={() => onApprove(product.id)} className={`${styles.actionButton} ${styles.actionApprove}`} title="Aprobar"><Check size={18} /></button>
+              <button onClick={() => onApprove(product.id)} className={`${styles.actionButton} ${styles.actionApprove}`} title="Aprobar">
+                <Check size={18} />
+              </button>
             )}
-            <button onClick={() => onDelete(product.id)} className={`${styles.actionButton} ${styles.actionDelete}`} title="Eliminar"><Trash2 size={18} /></button>
+            <button onClick={() => onDelete(product.id)} className={`${styles.actionButton} ${styles.actionDelete}`} title="Eliminar">
+              <Trash2 size={18} />
+            </button>
           </div>
         </div>
       ))}
@@ -124,31 +186,29 @@ const ProductsManagement = ({ products, onApprove, onDelete }) => (
   </div>
 );
 
+// Componente de Gestión de Usuarios
 const UsersManagement = ({ users, onToggleStatus }) => (
-  <div className="bg-white rounded-lg shadow p-6">
-    <div className="flex justify-between items-center mb-6">
-      <h2 className="text-xl font-bold">Gestión de Usuarios</h2>
-      <span className="text-sm text-gray-600">{users.length} usuarios</span>
+  <div className={styles.managementPanel}>
+    <div className={styles.panelHeader}>
+      <h2 className={styles.panelTitle}>Gestión de Usuarios</h2>
+      <span className={styles.panelItemCount}>{users.length} usuarios</span>
     </div>
-
-    <div className="space-y-3">
+    <div className={styles.itemList}>
       {users.map(user => (
-        <div key={user.id} className="border rounded-lg p-4 flex justify-between items-center hover:bg-gray-50">
-          <div className="flex-1">
-            <h3 className="font-semibold text-gray-800">{user.name}</h3>
-            <p className="text-sm text-gray-600">
+        <div key={user.email} className={styles.itemCard}>
+          <div className={styles.itemInfo}>
+            <h3 className={styles.itemName}>{user.nombre}</h3>
+            <p className={styles.itemDetails}>
               {user.email} • {user.role === 'vendor' ? 'Vendedor' : user.role === 'admin' ? 'Admin' : 'Cliente'}
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-              user.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-            }`}>
+          <div className={styles.itemActions}>
+            <span className={`${styles.statusBadge} ${user.status === 'active' ? styles.statusActive : styles.statusBlocked}`}>
               {user.status === 'active' ? 'Activo' : 'Bloqueado'}
             </span>
             <button
-              onClick={() => onToggleStatus(user.id, user.status)}
-              className="p-2 text-orange-600 hover:bg-orange-50 rounded transition"
+              onClick={() => onToggleStatus(user.email, user.status)}
+              className={`${styles.actionButton} ${styles.actionToggle}`}
               title={user.status === 'active' ? 'Bloquear' : 'Desbloquear'}
             >
               {user.status === 'active' ? <X size={18} /> : <Check size={18} />}
@@ -156,66 +216,63 @@ const UsersManagement = ({ users, onToggleStatus }) => (
           </div>
         </div>
       ))}
+      {users.length === 0 && <p className={styles.emptyState}>No hay usuarios</p>}
     </div>
   </div>
 );
 
+// Componente de Gestión de Pagos
 const PaymentsManagement = ({ payments }) => (
-  <div className="bg-white rounded-lg shadow p-6">
-    <h2 className="text-xl font-bold mb-6">Historial de Pagos</h2>
-    <div className="space-y-3">
+  <div className={styles.managementPanel}>
+    <h2 className={styles.panelTitle}>Historial de Pagos</h2>
+    <div className={styles.itemList}>
       {payments.map(payment => (
-        <div key={payment.id} className="border rounded-lg p-4">
-          <div className="flex justify-between items-center">
-            <div>
-              <h3 className="font-semibold">Orden #{payment.id}</h3>
-              <p className="text-sm text-gray-600">
-                {new Date(payment.created_at).toLocaleDateString()}
-              </p>
-            </div>
-            <div className="text-right">
-              <p className="font-bold text-green-600">${payment.total}</p>
-              <p className="text-xs text-gray-500">{payment.status}</p>
-            </div>
+        <div key={payment.id} className={styles.itemCard}>
+          <div className={styles.itemInfo}>
+            <h3 className={styles.itemName}>Orden #{payment.id}</h3>
+            <p className={styles.itemDetails}>
+              {new Date(payment.fecha).toLocaleDateString()} • ${payment.total}
+            </p>
+          </div>
+          <div className={styles.itemActions}>
+            <span className={`${styles.statusBadge} ${styles.statusActive}`}>
+              {payment.estado}
+            </span>
           </div>
         </div>
       ))}
-      {payments.length === 0 && (
-        <p className="text-center text-gray-500 py-8">No hay pagos registrados</p>
-      )}
+      {payments.length === 0 && <p className={styles.emptyState}>No hay pagos registrados</p>}
     </div>
   </div>
 );
 
+// Componente de Configuración
 const SettingsManagement = ({ config, onChange, onSave }) => (
-  <div className="bg-white rounded-lg shadow p-6">
-    <h2 className="text-xl font-bold mb-6">Configuración de la Plataforma</h2>
-    <div className="space-y-4">
-      <div className="border rounded-lg p-4">
-        <label className="block font-semibold mb-2">Descuento General (%)</label>
+  <div className={styles.managementPanel}>
+    <h2 className={styles.panelTitle}>Configuración de la Plataforma</h2>
+    <div className={styles.settingsForm}>
+      <div className={styles.formField}>
+        <label className={styles.formLabel}>Descuento General (%)</label>
         <input
           type="number"
           value={config.discount}
           onChange={(e) => onChange({ ...config, discount: parseFloat(e.target.value) })}
-          className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className={styles.formInput}
           min="0"
           max="100"
         />
       </div>
-      <div className="border rounded-lg p-4">
-        <label className="block font-semibold mb-2">Políticas de Envío</label>
+      <div className={styles.formField}>
+        <label className={styles.formLabel}>Políticas de Envío</label>
         <textarea
           value={config.shipping_policy}
           onChange={(e) => onChange({ ...config, shipping_policy: e.target.value })}
-          className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className={styles.formTextarea}
           rows="4"
           placeholder="Describe las políticas de envío..."
         />
       </div>
-      <button 
-        onClick={onSave}
-        className="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition font-semibold"
-      >
+      <button onClick={onSave} className={styles.saveButton}>
         Guardar Cambios
       </button>
     </div>
