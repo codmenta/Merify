@@ -17,7 +17,6 @@ python -m venv .venv
 # .\.venv\Scripts\Activate.ps1 # Windows PowerShell
 
 # 3. Instala las dependencias
-cd backend
 pip install -r requirements.txt
 
 # 4. Crea el archivo .env a partir del ejemplo
@@ -38,7 +37,6 @@ Abre una **nueva terminal** para ejecutar el frontend.
 cd frontend
 
 # 2. Instala las dependencias
-cd frontend
 npm install framer-motion
 
 npm install
