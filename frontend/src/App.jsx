@@ -15,6 +15,7 @@ import CartPage from './pages/CartPage/CartPage';
 import OrderSuccessPage from './pages/OrderSuccessPage/OrderSuccessPage';
 import AdminPage from './pages/AdminPage/AdminPage';     
 import VendorPage from './pages/VendorPage/VendorPage';
+import DevolutionPage from './pages/DevolutionPage/DevolutionPage';
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
                   <Route path="/forgot" element={<ForgotPasswordPage />} />
                   <Route path="/cart" element={<CartPage />} />
                   <Route path="/order/success" element={<OrderSuccessPage />} />
+                  <Route path="/devolution" element={<DevolutionPage />} />
                   
                   {/* 🔥 Ruta protegida para Admin */}
                   <Route 

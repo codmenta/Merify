@@ -17,6 +17,12 @@ class CheckoutSessionRequest(BaseModel):
     line_items: List[LineItem]
     gateway: Literal["stripe", "paypal"]  # Validación automática
 
+
+class RefundSimulateRequest(BaseModel):
+    gateway: Literal["stripe", "paypal"]
+    session_id: str
+    amount: int = None  # en la unidad mínima (centavos), opcional
+
 @router.get("/config")
 def get_payment_config():
     """Devuelve las claves publicables para configurar el frontend"""
@@ -103,3 +109,33 @@ async def verify_transaction(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)
         )
+
+
+@router.post('/refund-simulate')
+def simulate_refund(
+    request: RefundSimulateRequest,
+    current_user: User = Depends(get_current_user)
+):
+    """Simula una devolución sin contactar a la pasarela.
+
+    Útil para pruebas locales y para reducir errores en flujos de desarrollo.
+    Retorna un objeto de devolución simulado.
+    """
+    # Validaciones simples
+    if not request.session_id or not isinstance(request.session_id, str):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="session_id inválido")
+    if request.amount is not None and request.amount < 0:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="amount inválido")
+
+    # Construir respuesta simulada
+    simulated_refund = {
+        "gateway": request.gateway,
+        "refund_id": f"sim_{request.session_id[:8]}",
+        "status": "succeeded",
+        "amount": request.amount or 0,
+        "currency": "COP",
+        "simulated": True,
+        "message": "Esta es una devolución simulada. No se realizó ninguna operación en la pasarela."
+    }
+
+    return {"success": True, "refund": simulated_refund}

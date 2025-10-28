@@ -29,6 +29,9 @@ const Navbar = () => {
               <NavLink to="/" className={styles.link}>
                 En Descuento
               </NavLink>
+              <NavLink to="/devolution" className={styles.link}>
+                Devolución
+              </NavLink>
             </div>
           </div>
 
@@ -148,6 +151,9 @@ const Navbar = () => {
             </button>
             <NavLink to="/"className={styles.mobileMenuItem} onClick={() => setMobileMenuOpen(false)}>
               En Descuento
+            </NavLink>
+            <NavLink to="/devolution" className={styles.mobileMenuItem} onClick={() => setMobileMenuOpen(false)}>
+              Devolución
             </NavLink>
             {!user && (
               <>

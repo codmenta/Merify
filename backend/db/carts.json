@@ -11,5 +11,22 @@
       "imagen": ""
     }
   ],
-  "batman@gmail.com": []
+  "batman@gmail.com": [
+    {
+      "id": 3,
+      "producto_id": 1,
+      "nombre": "Procesador Intel Core i9-13900K",
+      "precio": 2323000,
+      "cantidad": 1,
+      "imagen": ""
+    },
+    {
+      "id": 4,
+      "producto_id": 7,
+      "nombre": "Monitor Gaming ASUS 27\" 144Hz",
+      "precio": 1250000,
+      "cantidad": 1,
+      "imagen": ""
+    }
+  ]
 }

@@ -1,7 +1,7 @@
 # backend/main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api.routes import auth, products, users, orders, cart, payments, admin, vendor
+from api.routes import auth, products, users, orders, cart, payments, admin, vendor, devolutions
 from core.config import settings
 
 app = FastAPI(title=settings.PROJECT_NAME)
@@ -56,6 +56,9 @@ app.include_router(admin.router, tags=["Admin"])
 # 8. Panel de Vendedor
 app.include_router(vendor.router, tags=["Vendor"])
 
+# 9. Devoluciones
+app.include_router(devolutions.router, prefix="/api/devolutions", tags=["Devolutions"])
+
 
 
 @app.get("/")
@@ -73,7 +76,8 @@ def root():
             "orders": "/api/orders",
             "payments": "/api/payments",
             "admin": "/api/admin",
-            "vendor": "/api/vendor"
+            "vendor": "/api/vendor",
+            "devolutions": "/api/devolutions"
         }
     }
 

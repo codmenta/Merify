@@ -1,3 +1,40 @@
+/* Mensaje de dinero devuelto */
+.refundMessage {
+  margin-top: 1.5rem;
+  padding: 1rem 1.5rem;
+  background: #e0f7fa;
+  color: #00796b;
+  border-radius: 0.75rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0, 121, 107, 0.08);
+  text-align: center;
+}
+/* Botón secundario para devolución */
+.secondaryButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  background: #e5e7eb;
+  color: #374151;
+  border: none;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(107, 114, 128, 0.15);
+}
+
+.secondaryButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.secondaryButton:hover:not(:disabled) {
+  background: #d1d5db;
+}
 /* frontend/src/pages/OrderSuccessPage/OrderSuccessPage.module.css */
 
 .successPage {

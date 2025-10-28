@@ -1,15 +1,19 @@
 // frontend/src/pages/OrderSuccessPage/OrderSuccessPage.jsx
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CartContext } from '../../context/CartContext';
 import { CheckCircle, Package, ArrowRight } from 'lucide-react';
 import styles from './OrderSuccessPage.module.css';
+import apiClient from '../../api/apiClient';
+import { useToast } from '../../context/ToastContext';
 
 const OrderSuccessPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { clearCart } = useContext(CartContext);
   const sessionId = searchParams.get('session_id');
+  const { toast } = useToast();
+  const [refundInfo, setRefundInfo] = useState(null);
 
   useEffect(() => {
     // Vaciar el carrito después de un pago exitoso
@@ -17,6 +21,8 @@ const OrderSuccessPage = () => {
       clearCart();
     }
   }, [sessionId, clearCart]);
+
+
 
   return (
     <div className={styles.successPage}>
@@ -60,15 +66,34 @@ const OrderSuccessPage = () => {
         </div>
 
         {/* Botones de acción */}
+
         <div className={styles.actions}>
           <button 
             onClick={() => navigate('/')}
             className={styles.primaryButton}
+            style={{ marginLeft: '12px' }}
           >
             Seguir comprando
             <ArrowRight size={20} />
           </button>
+          <button
+            onClick={() => {
+              setRefundInfo({ number: Math.floor(Math.random() * 1000000) });
+              navigate('/');
+            }}
+            className={styles.secondaryButton}
+            style={{ marginLeft: '12px' }}
+          >
+            Solicitar devolución
+          </button>
         </div>
+
+        {/* Mensaje de dinero devuelto */}
+        {refundInfo && (
+          <div className={styles.refundMessage}>
+            Dinero devuelto. Número de devolución: <b>{refundInfo.number}</b>
+          </div>
+        )}
 
         {/* Mensaje de soporte */}
         <p className={styles.supportText}>
