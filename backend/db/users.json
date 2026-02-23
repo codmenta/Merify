@@ -31,5 +31,11 @@
     "email": "batman@gmail.com",
     "tipo": "cliente",
     "hashed_password": "$5$rounds=535000$Xc2bGXrwDQKa/SXf$RsgvbI4HhhOumgiCch29eiXWZj2SrYEMHa7v/zdvWc8"
+  },
+  "ncmunoz@unimayor.edu.co": {
+    "nombre": "camilo",
+    "email": "ncmunoz@unimayor.edu.co",
+    "tipo": "cliente",
+    "hashed_password": "$5$rounds=535000$m1Y2JiYL0kEH4ICH$qr.A1BYfSccoy93chO57MjAfWgDfVLoZrosq0zaEx94"
   }
 }

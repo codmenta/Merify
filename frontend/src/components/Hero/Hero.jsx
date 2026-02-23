@@ -116,9 +116,22 @@ const ProductShowcase = () => (
       <div className={styles.productBadge}>-30% OFF</div>
 
       {/* Imagen/Emoji del producto */}
-      <div className={styles.productImage}>
-        <div className={styles.productEmoji}>💻</div>
-      </div>
+<div className={styles.productImage}>
+  <img 
+    src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=300&fit=crop"
+    alt="MacBook Pro 2024"
+    style={{
+      width: '100%',
+      height: '100%',
+      objectFit: 'cover',
+      borderRadius: '1rem'
+    }}
+    onError={(e) => {
+      e.target.style.display = 'none';
+      e.target.parentElement.innerHTML = '<div style="font-size: 6rem;">💻</div>';
+    }}
+  />
+</div>
 
       {/* Información del producto */}
       <h3 className={styles.productName}>MacBook Pro 2024</h3>

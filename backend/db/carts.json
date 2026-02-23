@@ -28,5 +28,15 @@
       "cantidad": 1,
       "imagen": ""
     }
+  ],
+  "ncmunoz@unimayor.edu.co": [
+    {
+      "id": 1,
+      "producto_id": 4,
+      "nombre": "Memoria RAM Corsair Vengeance 32GB",
+      "precio": 505000,
+      "cantidad": 1,
+      "imagen": ""
+    }
   ]
 }
