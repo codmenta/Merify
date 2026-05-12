@@ -9,13 +9,39 @@ const ProductQuickView = ({ product, isOpen, onClose, onAddToCart }) => {
   const [selectedImage, setSelectedImage] = useState(0);
   const modalRef = useRef(null);
   const previousFocus = useRef(null);
-
-  const productImages = [
-    { id: 1, emoji: '💻', label: 'Vista frontal' },
-    { id: 2, emoji: '🖥️', label: 'Vista lateral' },
-    { id: 3, emoji: '⌨️', label: 'Vista superior' },
-    { id: 4, emoji: '🖱️', label: 'Accesorios' },
-  ];
+  
+  // Determinar la imagen según la categoría
+  const getProductImages = (categoria) => {
+    const categoryMap = {
+      'laptop': ['laptop.svg', 'monitor.svg', 'keyboard.svg', 'mouse.svg'],
+      'portatil': ['laptop.svg', 'monitor.svg', 'keyboard.svg', 'mouse.svg'],
+      'computador': ['laptop.svg', 'monitor.svg', 'keyboard.svg', 'mouse.svg'],
+      'monitor': ['monitor.svg', 'laptop.svg', 'keyboard.svg', 'mouse.svg'],
+      'pantalla': ['monitor.svg', 'laptop.svg', 'keyboard.svg', 'mouse.svg'],
+      'teclado': ['keyboard.svg', 'laptop.svg', 'monitor.svg', 'mouse.svg'],
+      'mouse': ['mouse.svg', 'keyboard.svg', 'laptop.svg', 'monitor.svg'],
+      'raton': ['mouse.svg', 'keyboard.svg', 'laptop.svg', 'monitor.svg'],
+      'audifonos': ['headphones.svg', 'phone.svg', 'tablet.svg', 'default.svg'],
+      'auriculares': ['headphones.svg', 'phone.svg', 'tablet.svg', 'default.svg'],
+      'telefono': ['phone.svg', 'tablet.svg', 'headphones.svg', 'default.svg'],
+      'celular': ['phone.svg', 'tablet.svg', 'headphones.svg', 'default.svg'],
+      'movil': ['phone.svg', 'tablet.svg', 'headphones.svg', 'default.svg'],
+      'tablet': ['tablet.svg', 'phone.svg', 'laptop.svg', 'default.svg'],
+      'camara': ['camera.svg', 'default.svg', 'default.svg', 'default.svg'],
+      'camera': ['camera.svg', 'default.svg', 'default.svg', 'default.svg'],
+      'foto': ['camera.svg', 'default.svg', 'default.svg', 'default.svg'],
+    };
+    
+    const categoriaLower = categoria ? categoria.toLowerCase() : '';
+    for (const [key, images] of Object.entries(categoryMap)) {
+      if (categoriaLower.includes(key)) {
+        return images.map(img => `/images/products/${img}`);
+      }
+    }
+    return ['/images/products/default.svg', '/images/products/default.svg', '/images/products/default.svg', '/images/products/default.svg'];
+  };
+  
+  const productImages = product ? getProductImages(product.categoria) : [];
 
   // EFECTOS (Manejo de foco, scroll y ESC)
   useEffect(() => {
@@ -75,17 +101,17 @@ const ProductQuickView = ({ product, isOpen, onClose, onAddToCart }) => {
           <div className={styles.gallery}>
             <div className={styles.mainImageContainer}>
               {discount > 0 && <div className={styles.discountBadge}>-{discount}% OFF</div>}
-              <div className={styles.mainImageEmoji}>{productImages[selectedImage].emoji}</div>
+              <img src={productImages[selectedImage]} alt={`${product.nombre} - vista ${selectedImage + 1}`} className={styles.mainImage} />
             </div>
             <div className={styles.thumbnailGrid}>
               {productImages.map((img, idx) => (
                 <button
-                  key={img.id}
+                  key={idx}
                   onClick={() => setSelectedImage(idx)}
-                  aria-label={img.label}
+                  aria-label={`Vista ${idx + 1}`}
                   className={`${styles.thumbnailButton} ${selectedImage === idx ? styles.active : ''}`}
                 >
-                  {img.emoji}
+                  <img src={img} alt={`Vista ${idx + 1}`} className={styles.thumbnailImage} />
                 </button>
               ))}
             </div>

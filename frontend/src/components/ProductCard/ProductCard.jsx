@@ -24,11 +24,42 @@ const renderStars = (rating) => {
 // Componente principal
 const ProductCard = ({ product, onAddToCart, onQuickView }) => {
   const rating = product.rating || 4.5; // Rating por defecto
+  
+  // Determinar la imagen según la categoría
+  const getProductImage = (categoria) => {
+    const categoryMap = {
+      'laptop': 'laptop.svg',
+      'portatil': 'laptop.svg',
+      'computador': 'laptop.svg',
+      'monitor': 'monitor.svg',
+      'pantalla': 'monitor.svg',
+      'teclado': 'keyboard.svg',
+      'mouse': 'mouse.svg',
+      'raton': 'mouse.svg',
+      'audifonos': 'headphones.svg',
+      'auriculares': 'headphones.svg',
+      'telefono': 'phone.svg',
+      'celular': 'phone.svg',
+      'movil': 'phone.svg',
+      'tablet': 'tablet.svg',
+      'camara': 'camera.svg',
+      'camera': 'camera.svg',
+      'foto': 'camera.svg',
+    };
+    
+    const categoriaLower = categoria ? categoria.toLowerCase() : '';
+    for (const [key, image] of Object.entries(categoryMap)) {
+      if (categoriaLower.includes(key)) return `/images/products/${image}`;
+    }
+    return '/images/products/default.svg';
+  };
+  
+  const productImage = getProductImage(product.categoria);
 
   return (
     <div className={styles.productCard}>
       <div className={styles.productImage}>
-        <div className={styles.productPlaceholder}>💻</div>
+        <img src={productImage} alt={product.nombre} className={styles.productImg} />
         <button
           onClick={() => onQuickView(product)}
           className={styles.quickViewBtn}
