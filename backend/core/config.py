@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings
+import os
 
 class Settings(BaseSettings):
     PROJECT_NAME: str
@@ -18,5 +19,10 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = ".env"
+        env_file_encoding = "utf-8"
+
+# Cargar explícitamente el archivo .env antes de crear la instancia
+from dotenv import load_dotenv
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'), override=True)
 
 settings = Settings()

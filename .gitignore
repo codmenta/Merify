@@ -1,23 +1,43 @@
-# Entornos virtuales de Python
-/backend/.venv/
-/backend/__pycache__/
-/backend/*.pyc
+```gitignore
+# Python compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
 
-# Archivos de entorno y secretos
-/backend/.env
+# Dependencies
+node_modules/
+venv/
+.venv/
 
-# Dependencias de Node.js
-/frontend/node_modules/
+# Build artifacts
+dist/
+build/
+target/
 
-# Archivos de build del frontend
-/frontend/dist/
-/frontend/.vite/
+# Logs and temporary files
+*.log
+*.tmp
 
-# Archivos de log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# Environment files
+.env
+.env.local
+*.env.*
 
-# Configuración del Editor/IDE
+# Editors
 .vscode/
 .idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Coverage reports
+coverage/
+htmlcov/
+.coverage
+
+# Python specific caches
+.mypy_cache/
+.pytest_cache/
+```
