@@ -6,6 +6,19 @@ from db.json_handler import load_orders, save_orders
 
 router = APIRouter()
 
+@router.get("/orders/my-orders", response_model=list[Order])
+def get_my_orders(current_user: UserModel = Depends(get_current_user)):
+    """Obtiene el historial de órdenes del usuario autenticado."""
+    orders = load_orders()
+    
+    # Filtrar órdenes que pertenecen al usuario actual
+    user_orders = [
+        order for order in orders 
+        if order.get("cliente_email") == current_user.email
+    ]
+    
+    return user_orders
+
 @router.post("/orders", response_model=Order, status_code=status.HTTP_201_CREATED)
 def create_new_order(order_data: OrderCreate, current_user: UserModel = Depends(get_current_user)):
     orders = load_orders()
