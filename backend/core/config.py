@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     
     # Stripe
     STRIPE_SECRET_KEY: str
-    STRIPE_PUBLISHABLE_KEY: str
+    STRIPE_PUBLISHABLE_KEY: str = ""  # Renombrado para consistencia
     
     # PayPal (NUEVO)
     PAYPAL_CLIENT_ID: str = ""
@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
+        extra = "ignore"  # Ignorar campos extra en el .env
 
 # Cargar explícitamente el archivo .env antes de crear la instancia
 from dotenv import load_dotenv
